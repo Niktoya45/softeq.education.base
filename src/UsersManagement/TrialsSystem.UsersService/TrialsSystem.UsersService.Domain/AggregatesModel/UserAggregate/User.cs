@@ -16,7 +16,7 @@ namespace TrialsSystem.UsersService.Domain.AggregatesModel.UserAggregate
             Name = name;
             Surname = surname;
             CityId = cityd;
-            BirthDate = BirthDate;
+            BirthDate = birthDate;
             GenderId = genderId;
         }
 
@@ -39,6 +39,7 @@ namespace TrialsSystem.UsersService.Domain.AggregatesModel.UserAggregate
         public DateTime BirthDate { get; private set; }
 
         public decimal? Weight { get; private set; }
+
         public decimal? Height { get; private set; }
 
 

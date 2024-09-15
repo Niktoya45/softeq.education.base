@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using TrialsSystem.UsersService.Infrastructure.Models.BaseDTO;
 
 namespace TrialsSystem.UsersService.Infrastructure.Models.UserDTOs
@@ -20,7 +16,9 @@ namespace TrialsSystem.UsersService.Infrastructure.Models.UserDTOs
         public decimal? Weight { get; set; }
 
         public decimal? Height { get; set; }
+
         public string CityName { get; set; }
+
         public string GenderName { get; set; }
 
     }

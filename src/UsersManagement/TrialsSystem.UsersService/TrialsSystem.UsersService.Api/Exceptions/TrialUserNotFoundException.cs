@@ -1,13 +1,13 @@
 ﻿namespace TrialsSystem.UsersService.Api.Exceptions
 {
     /// <summary>
-    /// UserNotFondException
+    /// UserNotFoundException
     /// </summary>
-    public class TrialUserNotFondException : Exception
+    public class TrialUserNotFoundException : Exception
     {
         public string Id { get; }
 
-        public TrialUserNotFondException(string id)
+        public TrialUserNotFoundException(string id)
         {
             Id = id;
         }

@@ -19,8 +19,12 @@ namespace TrialsSystem.UsersService.Api.Filters
 
             switch (context.Exception)
             {
-                case TrialUserNotFondException userNotFoundexception:
+                case TrialUserNotFoundException userNotFoundexception:
                     _logger.LogCritical("User with Id {id} not found", userNotFoundexception.Id);
+                    SetContextResult(context, new BadRequestResult());
+                    break;
+                case TrialUserEmailExistsException userEmailExistsException:
+                    _logger.LogCritical("User with Email {email} already exists", userEmailExistsException.Email);
                     SetContextResult(context, new BadRequestResult());
                     break;
                 default:
