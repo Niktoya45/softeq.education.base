@@ -1,0 +1,6 @@
+@TrialsSystem.UserTaskService_HostAddress = http://localhost:5092
+
+GET {{TrialsSystem.UserTaskService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

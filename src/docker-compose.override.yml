@@ -23,3 +23,10 @@ services:
       - ASPNETCORE_URLS=http://+:80
     ports:
       - 4101:80
+  
+  um.usertask.service:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - 4102:80
