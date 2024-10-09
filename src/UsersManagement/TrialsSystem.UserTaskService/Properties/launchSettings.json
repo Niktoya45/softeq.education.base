@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "TrialsSystem.UserTaskService": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:53172;http://localhost:53173"
+    }
+  }
+}
