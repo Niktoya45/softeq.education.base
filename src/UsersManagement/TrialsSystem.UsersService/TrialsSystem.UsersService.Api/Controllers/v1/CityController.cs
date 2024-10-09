@@ -3,7 +3,7 @@ using TrialsSystem.UsersService.Infrastructure.Models.CityDTOs;
 using MediatR;
 using TrialsSystem.UsersService.Api.Application.Commands.CityCommands;
 using TrialsSystem.UsersService.Api.Application.Queries.CityQueries;
-using TrialsSystem.UsersService.Api.Filters;
+using TrialsSystem.UsersService.Api.Application.Queries.QueryParameters;
 
 namespace TrialsSystem.UsersService.Api.Controllers.v1
 {
@@ -36,7 +36,7 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
             [FromQuery] int? take = null
             )
         {
-            var response = await _mediator.Send(new CitiesQuery(take, skip));
+            var response = await _mediator.Send(new CitiesQuery(new Pagination(skip, take)));
 
             return Ok(response);
         }

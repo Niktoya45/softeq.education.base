@@ -3,7 +3,7 @@ using TrialsSystem.UsersService.Infrastructure.Models.UserDTOs;
 using MediatR;
 using TrialsSystem.UsersService.Api.Application.Commands.UsersCommands;
 using TrialsSystem.UsersService.Api.Application.Queries.UsersQueries;
-using TrialsSystem.UsersService.Api.Filters;
+using TrialsSystem.UsersService.Api.Application.Queries.QueryParameters;
 
 namespace TrialsSystem.UsersService.Api.Controllers.v1
 {
@@ -11,7 +11,6 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
     /// User management controller
     /// </summary>
     [Route("api/v1/{userId}/[controller]")]
-    [ServiceFilter(typeof(UserExceptionFilter))]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -44,7 +43,7 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
             [FromQuery] int? take = null,
             [FromQuery] string? email = null)
         {
-            var response = await _mediator.Send(new UsersQuery(take, skip, email));
+            var response = await _mediator.Send(new UsersQuery(new Pagination(skip, take), email));
             return Ok(response);
         }
 

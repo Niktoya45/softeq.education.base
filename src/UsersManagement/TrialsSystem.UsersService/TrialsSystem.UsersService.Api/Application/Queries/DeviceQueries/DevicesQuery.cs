@@ -1,19 +1,16 @@
 using MediatR;
 using TrialsSystem.UsersService.Infrastructure.Models.DeviceDTOs;
+using TrialsSystem.UsersService.Api.Application.Queries.QueryParameters;
 
 namespace TrialsSystem.UsersService.Api.Application.Queries.DeviceQueries
 {
     public class DevicesQuery : IRequest<IEnumerable<GetDevicesResponse>>
     {
-        public DevicesQuery(int? take, int? skip)
+        public DevicesQuery(Pagination? pagination)
         {
-            Take = take;
-
-            Skip = skip;
+            Pgn = pagination;
         }
 
-        public int? Take { get; }
-
-        public int? Skip { get; }
+        public Pagination? Pgn { get; }
     }
 }

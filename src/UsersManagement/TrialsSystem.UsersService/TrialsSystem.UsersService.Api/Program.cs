@@ -5,7 +5,6 @@ using MediatR;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using TrialsSystem.UsersService.Api.Application.Validation;
-using TrialsSystem.UsersService.Api.Filters;
 
 namespace TrialsSystem.UsersService.Api
 {
@@ -15,15 +14,13 @@ namespace TrialsSystem.UsersService.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            var assembly = Assembly.GetExecutingAssembly();
 
             builder.Services.AddControllers();
 
             builder.Services.AddFluentValidationAutoValidation();
 
-            builder.Services.AddValidatorsFromAssemblyContaining<EditUserRequestValidator>();
-            builder.Services.AddValidatorsFromAssemblyContaining<CreateUserRequestValidator>();
-            builder.Services.AddValidatorsFromAssemblyContaining<CreateCityRequestValidator>();
+            builder.Services.AddValidatorsFromAssembly(assembly);
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -34,12 +31,11 @@ namespace TrialsSystem.UsersService.Api
                     new OpenApiInfo { Title = "TrialsSystem.UsersService", Version = "v1" }
 
                     );
-                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlFilename = $"{assembly.GetName().Name}.xml";
                 c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
 
-            builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
-            builder.Services.AddScoped<UserExceptionFilter>();
+            builder.Services.AddMediatR(assembly);
 
             var app = builder.Build();
 
@@ -53,7 +49,6 @@ namespace TrialsSystem.UsersService.Api
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

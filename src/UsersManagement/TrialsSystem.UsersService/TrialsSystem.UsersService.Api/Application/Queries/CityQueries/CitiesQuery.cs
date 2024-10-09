@@ -1,20 +1,18 @@
 using MediatR;
 using TrialsSystem.UsersService.Infrastructure.Models.CityDTOs;
+using TrialsSystem.UsersService.Api.Application.Queries.QueryParameters;
 
 namespace TrialsSystem.UsersService.Api.Application.Queries.CityQueries
 {
     public class CitiesQuery : IRequest<IEnumerable<GetCityResponse>>
     {
 
-        public CitiesQuery(int? take, int? skip)
+        public CitiesQuery(Pagination? pagination)
         {
-            Take = take;
-
-            Skip = skip;
+            Pgn = pagination;
         }
 
-        public int? Take { get; }
+        public Pagination? Pgn { get; }
 
-        public int? Skip { get; } 
     }
 }

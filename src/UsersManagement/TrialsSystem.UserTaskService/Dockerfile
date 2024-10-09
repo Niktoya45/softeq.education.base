@@ -5,10 +5,11 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 WORKDIR /src
 
-COPY ["UsersManagement/TrialsSystem.UserTaskService/TrialsSystem.UserTaskService.Api/TrialsSystem.UserTaskService.Api.csproj", "UsersManagement/TrialsSystem.UserTaskService/TrialsSystem.UserTaskService.Api/"]
-COPY ["UsersManagement/TrialsSystem.UserTaskService/TrialsSystem.UserTaskService.Domain/TrialsSystem.UserTaskService.Domain.csproj", "UsersManagement/TrialsSystem.UserTaskService/TrialsSystem.UserTaskService.Domain/"]
-COPY ["UsersManagement/TrialsSystem.UserTaskService/TrialsSystem.UserTaskService.Infrastructure/TrialsSystem.UserTaskService.Infrastructure.csproj", "UsersManagement/TrialsSystem.UserTaskService/TrialsSystem.UserTaskService.Infrastructure/"]
-COPY ["UsersManagement/TrialsSystem.UserTaskService/TrialsSystem.UserTaskService.sln", "UsersManagement/TrialsSystem.UserTaskService/"]
+COPY ["UsersManagement/TrialsSystem.UserTaskService/TrialsSystem.UserTaskService.Api/*.csproj", "UsersManagement/TrialsSystem.UserTaskService/TrialsSystem.UserTaskService.Api/"]
+COPY ["UsersManagement/TrialsSystem.UserTaskService/TrialsSystem.UserTaskService.Domain/*.csproj", "UsersManagement/TrialsSystem.UserTaskService/TrialsSystem.UserTaskService.Domain/"]
+COPY ["UsersManagement/TrialsSystem.UserTaskService/TrialsSystem.UserTaskService.Infrastructure/*.csproj", "UsersManagement/TrialsSystem.UserTaskService/TrialsSystem.UserTaskService.Infrastructure/"]
+
+COPY ["UsersManagement/TrialsSystem.UserTaskService/*.sln", "UsersManagement/TrialsSystem.UserTaskService/"]
 
 RUN dotnet restore "UsersManagement/TrialsSystem.UserTaskService/TrialsSystem.UserTaskService.sln"
 COPY . .
