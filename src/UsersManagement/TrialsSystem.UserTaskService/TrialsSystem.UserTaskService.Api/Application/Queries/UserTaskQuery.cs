@@ -11,5 +11,6 @@ namespace TrialsSystem.UserTaskService.Api.Application.Queries
         }
 
         public string Id { get; }
+
     }
 }

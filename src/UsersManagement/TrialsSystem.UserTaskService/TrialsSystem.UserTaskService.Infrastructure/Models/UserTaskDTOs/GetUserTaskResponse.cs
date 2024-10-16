@@ -6,7 +6,9 @@ namespace TrialsSystem.UserTaskService.Infrastructure.Models.UserTaskDTOs
 
 		public string Status { get; set; }
 
-		public DateTime CreatedDateTime { get; set; }
+        public string UserId { get; set; }
+
+        public DateTime CreatedDateTime { get; set; }
 
 		public DateTime LastUpdatedDateTime { get; set; }
 

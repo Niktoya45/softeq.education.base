@@ -34,7 +34,7 @@ namespace TrialsSystem.UserTaskService.Api.Controllers.v1
         [ProducesResponseType(typeof(IEnumerable<GetUserTaskResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAsync(
+        public async Task<IActionResult> GetListAsync(
             [FromRoute] string userId,
             [FromQuery] int? skip = 0,
             [FromQuery] int? take = null)
@@ -55,11 +55,11 @@ namespace TrialsSystem.UserTaskService.Api.Controllers.v1
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(GetUserTaskResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetAsync(
+        public async Task<IActionResult> GetTaskAsync(
             [FromRoute] string userId,
             [FromRoute] string id)
         {
-            var response = await _mediator.Send(id);
+            var response = await _mediator.Send(new UserTaskQuery(id));
 
             return Ok(response);
         }
@@ -75,9 +75,7 @@ namespace TrialsSystem.UserTaskService.Api.Controllers.v1
         public async Task<IActionResult> PostAsync(CreateUserTaskRequest request)
         {
             var response = await _mediator.Send(new CreateUserTaskCommand(request.Name,
-                request.Status,
-                request.CreatedDateTime,
-                request.LastUpdatedDateTime,
+                request.UserId,
                 request.AdditionalProperties));
 
             return Ok(response);
@@ -98,9 +96,8 @@ namespace TrialsSystem.UserTaskService.Api.Controllers.v1
         {
             var response = await _mediator.Send(new UpdateUserTaskCommand(id,
                 request.Name,
+                request.UserId,
                 request.Status,
-                request.CreatedDateTime,
-                request.LastUpdatedDateTime,
                 request.AdditionalProperties));
 
             return Ok(response);

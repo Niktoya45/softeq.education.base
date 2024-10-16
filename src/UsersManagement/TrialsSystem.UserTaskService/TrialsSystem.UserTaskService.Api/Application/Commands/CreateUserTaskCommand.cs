@@ -5,26 +5,16 @@ namespace TrialsSystem.UserTaskService.Api.Application.Commands
 {
     public class CreateUserTaskCommand : IRequest<CreateUserTaskResponse>
     {
-        public CreateUserTaskCommand(string name,
-            string status, 
-            DateTime createdDateTime, 
-            DateTime lastUpdatedDateTime,
+        public CreateUserTaskCommand(string userId, string name,
             Dictionary<string, string> additionalProperties)
         {
-            Status = status;
+            UserId = userId;
             Name = name;
-            CreatedDateTime = createdDateTime;
-            LastUpdatedDateTime = lastUpdatedDateTime;
             AdditionalProperties = additionalProperties;
         }
 
+        public string UserId { get; }
         public string Name { get; }
-
-        public string Status { get; }
-
-        public DateTime CreatedDateTime { get; }
-
-        public DateTime LastUpdatedDateTime { get; }
 
         public Dictionary<string, string> AdditionalProperties { get; }
 
