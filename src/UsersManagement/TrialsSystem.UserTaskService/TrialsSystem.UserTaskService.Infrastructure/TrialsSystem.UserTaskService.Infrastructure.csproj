@@ -7,5 +7,20 @@
     <DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
+    <PackageReference Include="MongoDB.Analyzer" Version="1.5.0" />
+    <PackageReference Include="MongoDB.Driver" Version="3.0.0" />
+    <PackageReference Include="MongoDB.EntityFrameworkCore" Version="8.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Mapping\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TrialsSystem.UserTaskService.Domain\TrialsSystem.UserTaskService.Domain.csproj" />
+  </ItemGroup>
 
 </Project>

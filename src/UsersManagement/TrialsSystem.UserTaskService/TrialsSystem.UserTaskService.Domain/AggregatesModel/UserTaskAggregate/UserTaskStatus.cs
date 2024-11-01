@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace TrialsSystem.UserTaskService.Domain.AggregatesModel.UserTaskAggregate
 {
     public enum UserTaskStatus

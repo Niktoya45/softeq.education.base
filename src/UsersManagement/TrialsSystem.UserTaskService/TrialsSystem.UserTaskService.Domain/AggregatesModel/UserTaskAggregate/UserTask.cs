@@ -1,5 +1,5 @@
 using TrialsSystem.UserTaskService.Domain.AggregatesModel.Base;
-using TrialsSystem.UserTaskService.Api.Exceptions.UserTaskExceptions;
+using TrialsSystem.UserTaskService.Domain.Exceptions;
 
 namespace TrialsSystem.UserTaskService.Domain.AggregatesModel.UserTaskAggregate
 {
@@ -11,24 +11,20 @@ namespace TrialsSystem.UserTaskService.Domain.AggregatesModel.UserTaskAggregate
 
         public UserTaskStatus Status { get; private set; }
 
-        public DateTime CreatedDateTime { get; private set; }
-
-        public DateTime LastUpdatedDateTime { get; private set; }
-
         public Dictionary<string, string> AdditionalProperties { get; private set; }
 
-        public UserTask(string id,
+        public UserTask(
             string name,
             string userId
            )
         {
-            Id = id;
-
             UserId = userId;
 
             Name = name;
 
-            CreatedDateTime = DateTime.UtcNow;
+            CreatedDate = DateTime.UtcNow;
+
+            Status = UserTaskStatus.New;
 
             AdditionalProperties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         }
@@ -62,7 +58,7 @@ namespace TrialsSystem.UserTaskService.Domain.AggregatesModel.UserTaskAggregate
 
         public void SetUpdatedTime() 
         { 
-            LastUpdatedDateTime = DateTime.UtcNow;
+            LastModifiedDate = DateTime.UtcNow;
         }
     }
 

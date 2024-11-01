@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using TrialsSystem.UserTaskService.Api.Middlewares;
+using TrialsSystem.UserTaskService.Infrastructure.Context;
 
 namespace TrialsSystem.UserTaskService.Api
 {
@@ -37,6 +38,8 @@ namespace TrialsSystem.UserTaskService.Api
             });
 
             builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+
+            builder.Services.AddDbContext<UserTaskDbContext>();
 
             var app = builder.Build();
 

@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TrialsSystem.UsersService.Domain.AggregatesModel.Base;
+using TrialsSystem.UsersService.Domain.AggregatesModel.DeviceAggregate;
 
 namespace TrialsSystem.UsersService.Domain.AggregatesModel.UserAggregate
 {
     public class User : Entity
     {
-        public User(string email, string name, string surname, string cityd, string genderId, DateTime birthDate)
+        public User(string email, string name, string surname, string cityId, string genderId, DateTime birthDate)
         {
             Email = email;
             Name = name;
             Surname = surname;
-            CityId = cityd;
+            CityId = cityId;
             BirthDate = birthDate;
             GenderId = genderId;
         }
@@ -42,6 +39,7 @@ namespace TrialsSystem.UsersService.Domain.AggregatesModel.UserAggregate
 
         public decimal? Height { get; private set; }
 
+        public ICollection<Device> Devices { get; set; }
 
         public void SetWeight(decimal weight)
         {

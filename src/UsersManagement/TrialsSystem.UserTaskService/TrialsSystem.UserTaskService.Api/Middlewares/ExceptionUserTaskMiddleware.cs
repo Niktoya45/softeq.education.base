@@ -1,4 +1,5 @@
 ﻿using TrialsSystem.UserTaskService.Api.Exceptions.Base;
+using TrialsSystem.UserTaskService.Domain.Exceptions;
 
 namespace TrialsSystem.UserTaskService.Api.Middlewares
 {
@@ -23,6 +24,10 @@ namespace TrialsSystem.UserTaskService.Api.Middlewares
                 switch (e)
                 {
                     case ServiceException se:
+                        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                        break;
+
+                    case DomainException de:
                         context.Response.StatusCode = StatusCodes.Status400BadRequest;
                         break;
 

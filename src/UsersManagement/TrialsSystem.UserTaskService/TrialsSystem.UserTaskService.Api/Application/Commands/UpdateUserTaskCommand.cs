@@ -23,6 +23,7 @@ namespace TrialsSystem.UserTaskService.Api.Application.Commands
         public string Id { get; }
 
         public string UserId;
+
         public string Name { get; }
 
         public string Status { get; }

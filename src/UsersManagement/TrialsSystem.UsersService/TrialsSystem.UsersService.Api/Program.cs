@@ -2,9 +2,8 @@ using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using TrialsSystem.UsersService.Api.Application.Validation;
+using TrialsSystem.UsersService.Infrastructure;
 
 namespace TrialsSystem.UsersService.Api
 {
@@ -36,6 +35,8 @@ namespace TrialsSystem.UsersService.Api
             });
 
             builder.Services.AddMediatR(assembly);
+
+            builder.Services.AddDbContext<ServiceDbContext>();
 
             var app = builder.Build();
 
