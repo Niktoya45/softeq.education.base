@@ -18,7 +18,6 @@ namespace TrialsSystem.UsersService.Api.Middlewares
             try
             {
                 await next(context);
-                context.Response.StatusCode = StatusCodes.Status200OK;
             }
             catch(Exception e)
             {

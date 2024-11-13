@@ -3,7 +3,8 @@ using TrialsSystem.UsersService.Infrastructure.Models.UserDTOs;
 using MediatR;
 using TrialsSystem.UsersService.Api.Application.Commands.UsersCommands;
 using TrialsSystem.UsersService.Api.Application.Queries.UsersQueries;
-using TrialsSystem.UsersService.Api.Application.Queries.QueryParameters;
+using TrialsSystem.UsersService.Infrastructure.Repositories.QueryParameters;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace TrialsSystem.UsersService.Api.Controllers.v1
 {
@@ -70,6 +71,7 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         /// <summary>
         /// Post new single user made of request parameters 
         /// </summary>
+        /// <param name="userId">authorized user Id</param>
         /// <param name="request">request body</param>
         /// <returns>Newly created user instance</returns>
         /// <response code="200">User added successfully</response>
@@ -77,7 +79,9 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         [HttpPost]
         [ProducesResponseType(typeof(CreateUserResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PostAsync(CreateUserRequest request)
+        public async Task<IActionResult> PostAsync(
+            [FromRoute] string userId,
+            [FromBody] CreateUserRequest request)
         {
             var response = await _mediator.Send(new CreateUserCommand(request.Email,
                                                                              request.Name,
@@ -86,7 +90,8 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
                                                                              request.BirthDate,
                                                                              request.Weight,
                                                                              request.Height,
-                                                                             request.GenderId));
+                                                                             request.GenderId,
+                                                                             userId));
             return Ok(response);
 
         }
@@ -94,6 +99,7 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         /// <summary>
         /// Update single user by its id with provided request parameters
         /// </summary>
+        /// <param name="userId">authorized user Id</param>
         /// <param name="id">id of user to be updated</param>
         /// <param name="request">request body</param>
         /// <returns>Updated user instance</returns>
@@ -102,7 +108,10 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(UpdateUserResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PutAsync(string id, UpdateUserRequest request)
+        public async Task<IActionResult> PutAsync(
+            [FromRoute] string userId, 
+            [FromRoute] string id,
+            [FromBody] UpdateUserRequest request)
         {
             var response = await _mediator.Send(new UpdateUserCommand(
                                                 id,
@@ -111,7 +120,8 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
                                                 request.BirthDate,
                                                 request.Weight,
                                                 request.Height,
-                                                request.CityId));
+                                                request.CityId,
+                                                userId));
 
             return Ok(response);
         }
@@ -119,6 +129,7 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         /// <summary>
         /// Deleting user by its id
         /// </summary>
+        /// <param name="userId">authorized user Id</param>
         /// <param name="id">id of user to be deleted</param>
         /// <returns></returns>
         /// <response code="200">User removed successfully</response>
@@ -126,9 +137,11 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteAsync(string id)
+        public async Task<IActionResult> DeleteAsync(
+            [FromRoute] string userId,
+            [FromRoute] string id)
         {
-            await _mediator.Send(new DeleteUserCommand(id));
+            await _mediator.Send(new DeleteUserCommand(id, userId));
             return Ok();
         }
     }

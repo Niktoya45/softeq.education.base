@@ -7,7 +7,7 @@ namespace TrialsSystem.UsersService.Api.Application.Commands.CityCommands
     public class UpdateCityCommand : IRequest<UpdateCityResponse>
     {
 
-        public UpdateCityCommand(string id, string name)
+        public UpdateCityCommand(string id, string name, string auserId)
         {
             Id = id;
             Name = name;

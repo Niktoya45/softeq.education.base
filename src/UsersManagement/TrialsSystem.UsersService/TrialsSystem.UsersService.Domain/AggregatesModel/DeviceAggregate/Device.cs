@@ -14,16 +14,16 @@ namespace TrialsSystem.UsersService.Domain.AggregatesModel.DeviceAggregate
             FirmwareVersion = firmwareVersion;
         }
 
-        public string SerialNumber { get; private set; }
+        public string SerialNumber { get; set; }
 
-        public string Model { get; private set; }
+        public string Model { get; set; }
 	
 	    private string DeviceTypeId { get; set; }
 	
 	    [ForeignKey("DeviceTypeId")]
-        public virtual DeviceType Type { get; private set; }
+        public virtual DeviceType Type { get; set; }
 
-        public string FirmwareVersion { get; private set; }
+        public string FirmwareVersion { get; set; }
 
         public ICollection<User> Users { get; set; }
 

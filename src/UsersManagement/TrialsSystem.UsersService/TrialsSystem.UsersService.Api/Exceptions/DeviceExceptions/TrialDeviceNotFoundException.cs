@@ -1,6 +1,6 @@
 using TrialsSystem.UsersService.Api.Exceptions.Base;
 
-namespace TrialsSystem.UsersService.Api.Exceptions
+namespace TrialsSystem.UsersService.Api.Exceptions.DeviceExceptions
 {
     /// <summary>
     /// Device not found

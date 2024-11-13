@@ -8,6 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Application\Commands\Abstractions\**" />
+    <Compile Remove="Application\Queries\QueryParameters\**" />
+    <Content Remove="Application\Commands\Abstractions\**" />
+    <Content Remove="Application\Queries\QueryParameters\**" />
+    <EmbeddedResource Remove="Application\Commands\Abstractions\**" />
+    <EmbeddedResource Remove="Application\Queries\QueryParameters\**" />
+    <None Remove="Application\Commands\Abstractions\**" />
+    <None Remove="Application\Queries\QueryParameters\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />

@@ -6,7 +6,7 @@ namespace TrialsSystem.UsersService.Api.Application.Commands.DeviceCommands
     public class DeleteDeviceCommand : IRequest<Unit>
     {
 
-        public DeleteDeviceCommand(string id)
+        public DeleteDeviceCommand(string id, string auserId)
         {
             Id = id;
         }

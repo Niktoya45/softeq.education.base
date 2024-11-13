@@ -2,8 +2,11 @@ using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using TrialsSystem.UsersService.Infrastructure;
+using TrialsSystem.UsersService.Infrastructure.Repositories.Abstractions;
+using TrialsSystem.UsersService.Infrastructure.Repositories.Implementations;
 
 namespace TrialsSystem.UsersService.Api
 {
@@ -35,8 +38,15 @@ namespace TrialsSystem.UsersService.Api
             });
 
             builder.Services.AddMediatR(assembly);
+            builder.Services.AddAutoMapper(cfg => cfg.AddMaps(assembly));
 
-            builder.Services.AddDbContext<ServiceDbContext>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
+            builder.Services.AddScoped<ICityRepository, CityRepository>();
+
+            builder.Services.AddDbContext<ServiceDbContext>(
+                cfg => cfg.UseSqlServer(builder.Configuration.GetConnectionString("SqlDbConnectionString"))
+            );
 
             var app = builder.Build();
 

@@ -1,28 +1,35 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MongoDB.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using MongoDB.EntityFrameworkCore.Extensions;
 using TrialsSystem.UserTaskService.Domain.AggregatesModel.UserTaskAggregate;
 
 namespace TrialsSystem.UserTaskService.Infrastructure.Context
 {
-    public class UserTaskDbContext:DbContext
-    {   
-        public DbSet<UserTask> UserTasks { get; init; }
+    public class UserTaskDbContext : DbContext
+    {
+        public IMongoDatabase _mongodb { get; private set; }
+        public IMongoCollection<UserTask> UserTasks { get; private set; }
 
-        private readonly string _connectionStr = @"mongodb://localhost:27017";
+        public UserTaskDbContext(DbContextOptions opts, DbContextConfig cfg) : base(opts)
+        {
+            _mongodb = new MongoClient(cfg.ConnectionString).GetDatabase(cfg.DatabaseName);
+        }
 
-        public UserTaskDbContext(DbContextOptions opts):base(opts) { }
+        protected override void OnConfiguring(DbContextOptionsBuilder dbctxob)
+        {
 
-        protected override void OnConfiguring(DbContextOptionsBuilder dbctxob) {
+            dbctxob.UseMongoDB(_mongodb.Client, _mongodb.DatabaseNamespace.DatabaseName);
 
-            dbctxob.UseMongoDB(_connectionStr, "user_tasks_db");
+            UserTasks = _mongodb.GetCollection<UserTask>("UserTasks");
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<UserTask>().ToCollection("userTasks");
+            builder.Entity<UserTask>().ToCollection("UserTasks");
         }
     }
 }

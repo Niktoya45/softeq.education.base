@@ -12,7 +12,8 @@ namespace TrialsSystem.UsersService.Api.Application.Commands.UsersCommands
             DateTime birthDate,
             decimal? weight,
             decimal? height,
-            string cityId
+            string cityId,
+            string auserId
             )
 		{
             Id = id;

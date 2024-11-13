@@ -10,7 +10,8 @@ namespace TrialsSystem.UsersService.Api.Application.Commands.DeviceCommands
             string serialNumber,
             string model,
             string typeId,
-            string firmwareVersion)
+            string firmwareVersion,
+            string auserId)
         {
             Id = id;
             SerialNumber = serialNumber;

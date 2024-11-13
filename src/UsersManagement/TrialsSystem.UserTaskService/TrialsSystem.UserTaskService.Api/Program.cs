@@ -2,10 +2,14 @@ using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using TrialsSystem.UserTaskService.Api.Middlewares;
 using TrialsSystem.UserTaskService.Infrastructure.Context;
+using TrialsSystem.UserTaskService.Infrastructure.Repositories.Abstractions;
+using TrialsSystem.UserTaskService.Infrastructure.Repositories.Implementations;
 
 namespace TrialsSystem.UserTaskService.Api
 {
@@ -38,8 +42,13 @@ namespace TrialsSystem.UserTaskService.Api
             });
 
             builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+            builder.Services.AddAutoMapper(cfg => cfg.AddMaps(Assembly.GetExecutingAssembly()));
+
+            builder.Services.AddSingleton(builder.Configuration.GetSection("mongodb").Get<DbContextConfig>()
+                ?? throw new Exception("Missing section: \"mongdodb\" in app configuration file."));
 
             builder.Services.AddDbContext<UserTaskDbContext>();
+            builder.Services.AddScoped<IUserTaskRepository, UserTaskRepository>();
 
             var app = builder.Build();
 

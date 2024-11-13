@@ -12,8 +12,6 @@ namespace TrialsSystem.UserTaskService.Infrastructure.Models.UserTaskDTOs
 
         public DateTime CreatedDateTime { get; set; }
 
-        public DateTime LastUpdatedDateTime { get; set; }
-
         public Dictionary<string, string> AdditionalProperties { get; set; }
 
     }

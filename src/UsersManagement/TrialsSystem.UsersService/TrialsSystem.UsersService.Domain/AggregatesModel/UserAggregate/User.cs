@@ -17,27 +17,27 @@ namespace TrialsSystem.UsersService.Domain.AggregatesModel.UserAggregate
             GenderId = genderId;
         }
 
-        public string Email { get; private set; }
+        public string Email { get; set; }
 
-        public string Name { get; private set; }
+        public string Name { get;  set; }
 
-        public string Surname { get; private set; }
+        public string Surname { get; set; }
 
         private string CityId { get; set; }
 
         [ForeignKey("CityId")]
-        public virtual City City { get; private set; }
+        public virtual City City { get;  set; }
 
         private string GenderId { get; set; }
 
         [ForeignKey("GenderId")]
-        public virtual Gender Gender { get; private set; }
+        public virtual Gender Gender { get; set; }
 
-        public DateTime BirthDate { get; private set; }
+        public DateTime BirthDate { get;  set; }
 
-        public decimal? Weight { get; private set; }
+        public decimal? Weight { get;  set; }
 
-        public decimal? Height { get; private set; }
+        public decimal? Height { get; set; }
 
         public ICollection<Device> Devices { get; set; }
 
