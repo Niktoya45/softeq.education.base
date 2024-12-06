@@ -26,9 +26,8 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         /// Get all users by setting parameters and filters
         /// </summary>
         /// <param name="userId">authorized user Id</param>
-        /// <param name="skip">skip items (pagination parameters)</param>
-        /// <param name="take">take items (pagination parameters)</param>
         /// <param name="email">part of email (filter)</param>
+        /// <param name="pg">pagination parameters
         /// <returns>List of all users</returns>
         /// <response code="200">Success</response>
         /// <response code="400">No users are found</response>
@@ -40,11 +39,10 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
 
         public async Task<IActionResult> GetAsync(
             [FromRoute] string userId,
-            [FromQuery] int? skip = 0,
-            [FromQuery] int? take = null,
-            [FromQuery] string? email = null)
+            [FromQuery] string? email = null,
+            [FromQuery] Pagination? pg = null)
         {
-            var response = await _mediator.Send(new UsersQuery(new Pagination(skip, take), email));
+            var response = await _mediator.Send(new UsersQuery(pg, email));
             return Ok(response);
         }
 
@@ -121,6 +119,8 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
                                                 request.Weight,
                                                 request.Height,
                                                 request.CityId,
+                                                request.GenderId,
+                                                request.DeviceIds,
                                                 userId));
 
             return Ok(response);

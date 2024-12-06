@@ -7,9 +7,9 @@ namespace TrialsSystem.UsersService.Api.Application.Queries.CityQueries
     public class CitiesQuery : IRequest<IEnumerable<GetCityResponse>>
     {
 
-        public CitiesQuery(Pagination pagination)
+        public CitiesQuery(Pagination? pagination)
         {
-            Pg = pagination;
+            Pg = pagination ?? new Pagination();
         }
 
         public Pagination Pg { get; }

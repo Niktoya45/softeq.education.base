@@ -7,6 +7,8 @@ namespace TrialsSystem.UsersService.Api.Exceptions.CityExceptions
     /// </summary>
     public class TrialCityNotFoundException : ServiceException
     {
+        public TrialCityNotFoundException() : base("No city was found")
+        { }
         public TrialCityNotFoundException(string id):base($"City with Id {id} is not found") {
             Id = id;            
         }

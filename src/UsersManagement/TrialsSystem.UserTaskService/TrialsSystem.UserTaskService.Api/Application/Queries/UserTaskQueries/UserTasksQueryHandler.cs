@@ -18,7 +18,12 @@ namespace TrialsSystem.UserTaskService.Api.Application.Queries.UserTaskQueries
         }
         public async Task<IEnumerable<GetUserTaskResponse>> Handle(UserTasksQuery request, CancellationToken cancellationToken)
         {
-            IEnumerable<UserTask>? utasks = await _repository.GetByUserId(request.UserId, cancellationToken);
+            IEnumerable<UserTask>? utasks;
+
+            if (request.Name != null)
+                utasks = await _repository.GetByName(request.Name, request.UserId, cancellationToken);
+
+            else utasks = await _repository.GetByUserId(request.UserId, cancellationToken, request.Pg);
 
             if (utasks == null)
                 throw new TrialUserTaskNotFoundException(request.UserId);

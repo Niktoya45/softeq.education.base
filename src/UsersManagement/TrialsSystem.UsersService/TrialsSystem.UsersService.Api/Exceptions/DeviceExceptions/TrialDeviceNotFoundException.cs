@@ -7,6 +7,8 @@ namespace TrialsSystem.UsersService.Api.Exceptions.DeviceExceptions
     /// </summary>
     public class TrialDeviceNotFoundException : ServiceException
     {
+        public TrialDeviceNotFoundException():base("No device was found")
+        { }
         public TrialDeviceNotFoundException(string id):base($"Device with Id {id} is not found")
         {
             Id = id;

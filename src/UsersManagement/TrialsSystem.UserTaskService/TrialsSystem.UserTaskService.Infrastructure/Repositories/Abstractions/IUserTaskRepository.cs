@@ -7,7 +7,7 @@ namespace TrialsSystem.UserTaskService.Infrastructure.Repositories.Abstractions
     {
         Task<IEnumerable<UserTask>?> GetByUserId(string userId, CancellationToken ct = default, Pagination? pg = null);
 
-        Task<UserTask?> GetByName( string name, string userId, CancellationToken ct = default);
+        Task<IEnumerable<UserTask>?> GetByName( string name, string userId, CancellationToken ct = default);
 
         Task<UserTask?> DeleteByName(string name, string userId, CancellationToken ct = default);
     }

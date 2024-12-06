@@ -9,8 +9,10 @@ namespace TrialsSystem.UsersService.Infrastructure.Models.DeviceDTOs
 
         public string Model { get; set; }
 
-        public IdNameDto Type { get; set; }
+        public IdNameDto DeviceType { get; set; }
 
         public string FirmwareVersion { get; set; }
+
+        public IdNameDto[] Users { get; set; }
     }
 }

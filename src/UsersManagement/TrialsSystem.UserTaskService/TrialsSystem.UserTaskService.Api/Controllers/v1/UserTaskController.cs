@@ -4,7 +4,6 @@ using MediatR;
 using TrialsSystem.UserTaskService.Api.Application.Commands;
 using TrialsSystem.UserTaskService.Api.Application.Queries.UserTaskQueries;
 using TrialsSystem.UserTaskService.Infrastructure.Repositories.QueryParameters;
-using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace TrialsSystem.UserTaskService.Api.Controllers.v1
 {
@@ -27,6 +26,7 @@ namespace TrialsSystem.UserTaskService.Api.Controllers.v1
         /// </summary>
         /// <param name="userId">authorized user Id</param>
         /// <param name="pg">pagination parameters</param>
+        /// <param name="name">task name to be returned (filter)</param>
         /// <returns>All user task list</returns>
         /// <response code="200">Success</response>
         /// <response code="400">No task was found for this user</response>
@@ -37,29 +37,31 @@ namespace TrialsSystem.UserTaskService.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetListAsync(
             [FromRoute] string userId,
-            [FromQuery] Pagination? pg = null)
+            [FromQuery] string? name = null,
+            [FromQuery] Pagination? pg = null
+            )
         {
-            var response = await _mediator.Send(new UserTasksQuery(userId, pg));
+            var response = await _mediator.Send(new UserTasksQuery(userId,name, pg));
 
             return Ok(response);
         }
 
         /// <summary>
-        /// Get user task by its name
+        /// Get user task by its id
         /// </summary>
         /// <param name="userId">authorized user Id</param>
-        /// <param name="name">requested task name</param>
+        /// <param name="id">requested task id</param>
         /// <returns></returns>
         /// <response code="200">Success</response>
         /// <response code="400">Task is not found</response>
-        [HttpGet("{name}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(typeof(GetUserTaskResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetTaskAsync(
             [FromRoute] string userId,
-            [FromQuery] string name)
+            [FromQuery] string id)
         {
-            var response = await _mediator.Send(new UserTaskQuery(userId, name));
+            var response = await _mediator.Send(new UserTaskQuery(userId, id));
 
             return Ok(response);
         }

@@ -5,10 +5,10 @@ namespace TrialsSystem.UserTaskService.Api.Application.Queries.UserTaskQueries
 {
     public class UserTaskQuery : IRequest<GetUserTaskResponse>
     {
-        public UserTaskQuery(string userId, string name)
+        public UserTaskQuery(string userId, string id)
         {
             UserId = userId;
-            Name = name;
+            Id = id;
 
         }
 

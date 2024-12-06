@@ -3,25 +3,25 @@ using MediatR;
 using TrialsSystem.UsersService.Api.Exceptions.DeviceExceptions;
 using TrialsSystem.UsersService.Domain.AggregatesModel.DeviceAggregate;
 using TrialsSystem.UsersService.Infrastructure.Models.DeviceDTOs;
-using TrialsSystem.UsersService.Infrastructure.Repositories.Abstractions;
+using TrialsSystem.UsersService.Infrastructure.Repositories.UnitOfWork;
 
 namespace TrialsSystem.UsersService.Api.Application.Commands.DeviceCommands
 {
     public class UpdateDeviceCommandHandler : IRequestHandler<UpdateDeviceCommand, UpdateDeviceResponse>
     {
-        IDeviceRepository _repository;
+        IUnitOfWork _unitOfWork;
         IMapper _mapper;
 
-        public UpdateDeviceCommandHandler(IDeviceRepository repository, IMapper mapper)
+        public UpdateDeviceCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
         public async Task<UpdateDeviceResponse> Handle(UpdateDeviceCommand request, CancellationToken cancellationToken)
         {
             Device device = _mapper.Map<UpdateDeviceCommand, Device>(request);
 
-            Device? updated = await _repository.Update(device);
+            Device? updated = await _unitOfWork.Devices.Update(device);
 
             if (updated == null)
             {

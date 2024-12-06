@@ -3,25 +3,25 @@ using MediatR;
 using TrialsSystem.UsersService.Api.Exceptions.CityExceptions;
 using TrialsSystem.UsersService.Domain.AggregatesModel.UserAggregate;
 using TrialsSystem.UsersService.Infrastructure.Models.CityDTOs;
-using TrialsSystem.UsersService.Infrastructure.Repositories.Abstractions;
+using TrialsSystem.UsersService.Infrastructure.Repositories.UnitOfWork;
 
 namespace TrialsSystem.UsersService.Api.Application.Commands.CityCommands
 {
     public class UpdateCityCommandHandler : IRequestHandler<UpdateCityCommand, UpdateCityResponse>
     {
-        ICityRepository _repository;
+        IUnitOfWork _unitOfWork;
         IMapper _mapper;
 
-        public UpdateCityCommandHandler(ICityRepository repository, IMapper mapper)
+        public UpdateCityCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
         public async Task<UpdateCityResponse> Handle(UpdateCityCommand request, CancellationToken cancellationToken)
         {
             City city = _mapper.Map<UpdateCityCommand, City>(request);
 
-            City? updated = await _repository.Update(city);
+            City? updated = await _unitOfWork.Cities.Update(city);
 
             if (updated == null)
             {

@@ -1,21 +1,21 @@
 using MediatR;
 using TrialsSystem.UsersService.Api.Exceptions.DeviceExceptions;
 using TrialsSystem.UsersService.Domain.AggregatesModel.DeviceAggregate;
-using TrialsSystem.UsersService.Infrastructure.Repositories.Abstractions;
+using TrialsSystem.UsersService.Infrastructure.Repositories.UnitOfWork;
 
 namespace TrialsSystem.UsersService.Api.Application.Commands.DeviceCommands
 {
     public class DeleteDeviceCommandHandler : IRequestHandler<DeleteDeviceCommand, Unit>
     {
-        IDeviceRepository _repository;
+        IUnitOfWork _unitOfWork;
 
-        public DeleteDeviceCommandHandler(IDeviceRepository repository)
+        public DeleteDeviceCommandHandler(IUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Unit> Handle(DeleteDeviceCommand request, CancellationToken cancellationToken)
         {
-            Device? deleted = await _repository.Delete(request.Id, cancellationToken);
+            Device? deleted = await _unitOfWork.Devices.Delete(request.Id, cancellationToken);
 
             if (deleted == null)
             {

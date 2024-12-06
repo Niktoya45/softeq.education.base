@@ -7,6 +7,14 @@ namespace TrialsSystem.UsersService.Domain.AggregatesModel.UserAggregate
 {
     public class User : Entity
     {
+
+        public User() { }
+
+        public User(string id)
+        {
+            Id = id;
+        }
+
         public User(string email, string name, string surname, string cityId, string genderId, DateTime birthDate)
         {
             Email = email;
@@ -23,14 +31,12 @@ namespace TrialsSystem.UsersService.Domain.AggregatesModel.UserAggregate
 
         public string Surname { get; set; }
 
-        private string CityId { get; set; }
+        public string CityId { get; set; }
 
-        [ForeignKey("CityId")]
         public virtual City City { get;  set; }
 
-        private string GenderId { get; set; }
+        public string GenderId { get; set; }
 
-        [ForeignKey("GenderId")]
         public virtual Gender Gender { get; set; }
 
         public DateTime BirthDate { get;  set; }

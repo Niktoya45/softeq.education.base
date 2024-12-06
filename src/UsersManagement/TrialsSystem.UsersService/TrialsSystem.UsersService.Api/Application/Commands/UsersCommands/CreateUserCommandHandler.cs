@@ -2,24 +2,24 @@
 using MediatR;
 using TrialsSystem.UsersService.Domain.AggregatesModel.UserAggregate;
 using TrialsSystem.UsersService.Infrastructure.Models.UserDTOs;
-using TrialsSystem.UsersService.Infrastructure.Repositories.Abstractions;
+using TrialsSystem.UsersService.Infrastructure.Repositories.UnitOfWork;
 
 namespace TrialsSystem.UsersService.Api.Application.Commands.UsersCommands
 {
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, CreateUserResponse>
     {
-        IUserRepository _repository;
+        IUnitOfWork _unitOfWork;
         IMapper _mapper;
 
-        public CreateUserCommandHandler(IUserRepository repository, IMapper mapper)
+        public CreateUserCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
         public async Task<CreateUserResponse> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             User user = _mapper.Map<CreateUserCommand, User>(request);
-            User added = _repository.Add(user);
+            User added = _unitOfWork.Users.Add(user);
 
             return _mapper.Map<User, CreateUserResponse>(added);
         }

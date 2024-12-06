@@ -6,8 +6,13 @@ namespace TrialsSystem.UsersService.Domain.AggregatesModel.DeviceAggregate
 {
     public class Device : Entity
     {
-        public Device(string id, string serialNumber, string deviceTypeId, string model, string firmwareVersion) {
+        public Device() { }
+
+        public Device(string id)
+        {
             Id = id;
+        }
+        public Device(string serialNumber, string deviceTypeId, string model, string firmwareVersion) {
             SerialNumber = serialNumber;
             DeviceTypeId = deviceTypeId;
             Model = model;
@@ -18,9 +23,8 @@ namespace TrialsSystem.UsersService.Domain.AggregatesModel.DeviceAggregate
 
         public string Model { get; set; }
 	
-	    private string DeviceTypeId { get; set; }
+	    public string DeviceTypeId { get; set; }
 	
-	    [ForeignKey("DeviceTypeId")]
         public virtual DeviceType Type { get; set; }
 
         public string FirmwareVersion { get; set; }

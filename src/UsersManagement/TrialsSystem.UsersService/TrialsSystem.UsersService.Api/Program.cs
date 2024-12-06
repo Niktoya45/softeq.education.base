@@ -5,8 +5,9 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using TrialsSystem.UsersService.Infrastructure;
-using TrialsSystem.UsersService.Infrastructure.Repositories.Abstractions;
-using TrialsSystem.UsersService.Infrastructure.Repositories.Implementations;
+using TrialsSystem.UsersService.Infrastructure.Repositories;
+using TrialsSystem.UsersService.Infrastructure.Repositories.UnitOfWork;
+
 
 namespace TrialsSystem.UsersService.Api
 {
@@ -40,12 +41,13 @@ namespace TrialsSystem.UsersService.Api
             builder.Services.AddMediatR(assembly);
             builder.Services.AddAutoMapper(cfg => cfg.AddMaps(assembly));
 
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
-            builder.Services.AddScoped<ICityRepository, CityRepository>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            builder.Services.AddDbContext<ServiceDbContext>(
-                cfg => cfg.UseSqlServer(builder.Configuration.GetConnectionString("SqlDbConnectionString"))
+            builder.Services.AddDbContext<ServiceDbContext>(cfg =>
+                {
+                    cfg.UseSqlServer(builder.Configuration.GetConnectionString("SqlDbConnectionString"));
+                    cfg.AddInterceptors(new EntityInterceptor());
+                }
             );
 
             var app = builder.Build();

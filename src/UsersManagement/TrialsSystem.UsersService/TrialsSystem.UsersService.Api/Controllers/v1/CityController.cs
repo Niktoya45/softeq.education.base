@@ -22,8 +22,7 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         /// Get all city names
         /// </summary>
         /// <param name="userId">authorized user id</param>
-        /// <param name="skip">skip items (pagination parameters)</param>
-        /// <param name="take">take items (pagination parameters)</param>
+        /// <param name="pg">pagination parameters</param>
         /// <returns>List of all cities</returns>
         /// <response code="200">Success</response>
         /// <response code="400">No city is found</response>
@@ -32,11 +31,10 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAsync(
             [FromRoute] string userId,
-            [FromQuery] int? skip = 0,
-            [FromQuery] int? take = null
+            [FromQuery] Pagination? pg = null
             )
         {
-            var response = await _mediator.Send(new CitiesQuery(new Pagination(skip, take)));
+            var response = await _mediator.Send(new CitiesQuery(pg));
 
             return Ok(response);
         }

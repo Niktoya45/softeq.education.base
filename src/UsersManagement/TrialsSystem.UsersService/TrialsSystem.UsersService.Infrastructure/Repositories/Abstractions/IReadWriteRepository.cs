@@ -6,9 +6,9 @@ namespace TrialsSystem.UsersService.Infrastructure.Repositories.Abstractions
 {
     public interface IReadWriteRepository<T>
     {
-        Task<IEnumerable<T>?> GetAll(Expression<Func<T, bool>> query,
+        Task<IEnumerable<T>?> GetAll(Expression<Func<T, bool>>? query = null,
             CancellationToken ct = default,
-            Pagination pg);
+            Pagination pg = null);
 
         Task<T?> GetById(string id, CancellationToken ct = default);
 

@@ -13,5 +13,10 @@ namespace TrialsSystem.UsersService.Api.Exceptions.UserExceptions
         {
             Id = id;
         }
+
+        public TrialUserNotFoundException(string msg, string? filterparam) 
+            : base(filterparam == null ? msg : $"No user with email {filterparam} was found")
+        {
+        }
     }
 }

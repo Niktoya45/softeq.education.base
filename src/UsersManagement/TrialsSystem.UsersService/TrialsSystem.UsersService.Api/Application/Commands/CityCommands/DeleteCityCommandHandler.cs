@@ -1,21 +1,21 @@
 using MediatR;
 using TrialsSystem.UsersService.Domain.AggregatesModel.UserAggregate;
-using TrialsSystem.UsersService.Infrastructure.Repositories.Abstractions;
+using TrialsSystem.UsersService.Infrastructure.Repositories.UnitOfWork;
 using TrialsSystem.UsersService.Api.Exceptions.CityExceptions;
 
 namespace TrialsSystem.UsersService.Api.Application.Commands.CityCommands
 {
     public class DeleteCityCommandHandler : IRequestHandler<DeleteCityCommand, Unit>
     {
-        ICityRepository _repository;
+        IUnitOfWork _unitOfWork;
 
-        public DeleteCityCommandHandler(ICityRepository repository)
+        public DeleteCityCommandHandler(IUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Unit> Handle(DeleteCityCommand request, CancellationToken cancellationToken)
         {
-            City? deleted = await _repository.Delete(request.Id, cancellationToken);
+            City? deleted = await _unitOfWork.Cities.Delete(request.Id, cancellationToken);
 
             if (deleted == null)
             {

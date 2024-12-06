@@ -6,9 +6,9 @@ namespace TrialsSystem.UsersService.Api.Application.Queries.DeviceQueries
 {
     public class DevicesQuery : IRequest<IEnumerable<GetDevicesResponse>>
     {
-        public DevicesQuery(Pagination pagination)
+        public DevicesQuery(Pagination? pagination)
         {
-            Pg = pagination;
+            Pg = pagination?? new Pagination();
         }
 
         public Pagination Pg { get; }

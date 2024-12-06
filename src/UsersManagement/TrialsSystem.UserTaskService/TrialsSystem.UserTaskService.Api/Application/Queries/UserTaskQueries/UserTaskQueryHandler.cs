@@ -11,14 +11,14 @@ namespace TrialsSystem.UserTaskService.Api.Application.Queries.UserTaskQueries
     {
         IUserTaskRepository _repository;
         IMapper _mapper;
-        public UserTaskQueryHandler(IUserTaskRepository repository, IMapper mapper)
+        public UserTaskQueryHandler(IUserTaskRepository repository)
         {
             _repository = repository;
             _mapper = mapper;
         }
         public async Task<GetUserTaskResponse> Handle(UserTaskQuery request, CancellationToken cancellationToken)
         {
-            UserTask? utask = await _repository.GetByName(request.Name, request.UserId, cancellationToken);
+            UserTask? utask = await _repository.GetById(request.Id, cancellationToken);
 
             if (utask == null)
                 throw new TrialUserTaskNotFoundException(request.Name, request.UserId);

@@ -8,20 +8,25 @@ namespace TrialsSystem.UsersService.Infrastructure.Repositories.Implementations
 {
     public abstract class EntityRepository<T> : IEntityRepository<T> where T : Entity
     {
-        DbSet<T> _dbSet { get; init; }
+        protected DbContext _dbContext;
+        protected DbSet<T> _dbSet { get; init; }
 
-        public EntityRepository(ServiceDbContext _dbContext)
+        public EntityRepository(ServiceDbContext dbContext)
         {
-            _dbSet = _dbContext.Set<T>();
+            _dbSet = dbContext.Set<T>();
+            _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<T>?> GetAll(Expression<Func<T, bool>> query,
+        public async Task<IEnumerable<T>?> GetAll(Expression<Func<T, bool>>? query = null,
             CancellationToken ct = default,
             Pagination? pg = null)
         {
             pg ??= new Pagination();
 
-            return await _dbSet.AsQueryable().Where(e => !e.IsDeleted).AsQueryable().Skip(pg.Skip ?? 0).Take(pg.Take ?? 0).ToListAsync(ct);
+            return await _dbSet.AsQueryable().Where(query??(_=>true))
+                .AsQueryable().Where(e => !e.IsDeleted)
+                .AsQueryable().Skip(pg.Skip ?? 0).Take(pg.Take ?? 0)
+                .ToListAsync(ct);
         }
 
         public async Task<T?> GetById(string id, CancellationToken ct = default)

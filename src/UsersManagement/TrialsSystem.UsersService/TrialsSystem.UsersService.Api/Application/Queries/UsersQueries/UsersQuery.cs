@@ -9,9 +9,9 @@ namespace TrialsSystem.UsersService.Api.Application.Queries.UsersQueries
         public Pagination Pg;
         public string? Email { get; }
 
-        public UsersQuery(Pagination pagination, string email)
+        public UsersQuery(Pagination? pagination, string? email)
         {
-            Pg = pagination;
+            Pg = pagination ?? new Pagination();
             Email = email;
         }
     }

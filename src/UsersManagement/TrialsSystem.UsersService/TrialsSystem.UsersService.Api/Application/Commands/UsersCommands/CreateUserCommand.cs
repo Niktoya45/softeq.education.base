@@ -41,6 +41,5 @@ namespace TrialsSystem.UsersService.Api.Application.Commands.UsersCommands
 
         public string GenderId { get; }
 
-
     }
 }

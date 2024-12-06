@@ -51,9 +51,9 @@ namespace TrialsSystem.UserTaskService.Infrastructure.Repositories.Implementatio
             return await GetAll(ut => ut.UserId == userId, ct, pg);
         }
 
-        public async Task<UserTask?> GetByName(string name, string userId, CancellationToken ct = default)
+        public async Task<IEnumerable<UserTask>?> GetByName(string name, string userId, CancellationToken ct = default)
         {
-            return await GetFirst(ut => ut.Name == name && ut.UserId == userId, ct);
+            return await GetAll(ut => ut.Name == name && ut.UserId == userId, ct, null);
         }
         public UserTask Add(UserTask utask)
         {

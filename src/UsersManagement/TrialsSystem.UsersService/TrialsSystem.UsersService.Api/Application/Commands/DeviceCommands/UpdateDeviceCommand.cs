@@ -11,13 +11,16 @@ namespace TrialsSystem.UsersService.Api.Application.Commands.DeviceCommands
             string model,
             string typeId,
             string firmwareVersion,
-            string auserId)
+            string[] userIds,
+            string auserId
+            )
         {
             Id = id;
             SerialNumber = serialNumber;
             Model = model;
             TypeId = typeId;
             FirmwareVersion = firmwareVersion;
+            UserIds = userIds;
         }
 
         public string Id { get; set; }
@@ -25,10 +28,12 @@ namespace TrialsSystem.UsersService.Api.Application.Commands.DeviceCommands
         public string SerialNumber { get; set; }
 
         public string Model { get; set; }
-
+        
         public string TypeId { get; set; }
 
         public string FirmwareVersion { get; set; }
+
+        public string[] UserIds { get; set;}
 
     }
 }
