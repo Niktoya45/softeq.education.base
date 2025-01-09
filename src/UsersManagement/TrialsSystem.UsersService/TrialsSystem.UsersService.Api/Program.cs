@@ -4,6 +4,7 @@ using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using TrialsSystem.UsersService.Api.Middlewares;
 using TrialsSystem.UsersService.Infrastructure;
 using TrialsSystem.UsersService.Infrastructure.Repositories;
 using TrialsSystem.UsersService.Infrastructure.Repositories.UnitOfWork;
@@ -58,6 +59,8 @@ namespace TrialsSystem.UsersService.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseMiddleware<ExceptionUsersServiceMiddleware>();
 
             app.UseHttpsRedirection();
 

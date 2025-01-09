@@ -7,17 +7,19 @@ namespace TrialsSystem.UserTaskService.Api.Middlewares
     public class ExceptionUserTaskMiddleware
     {
         private readonly ILogger<ExceptionUserTaskMiddleware> _logger;
+        private readonly RequestDelegate _next;
 
-        public ExceptionUserTaskMiddleware(ILogger<ExceptionUserTaskMiddleware> logger)
+        public ExceptionUserTaskMiddleware(RequestDelegate next, ILogger<ExceptionUserTaskMiddleware> logger)
         {
+            _next = next;
             _logger = logger;
         }
 
-        public async Task Invoke(HttpContext context, RequestDelegate next)
+        public async Task Invoke(HttpContext context)
         {
             try
             {
-                await next(context);
+                await _next(context);
                 context.Response.StatusCode = StatusCodes.Status200OK;
             }
             catch (Exception e)

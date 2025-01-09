@@ -1,10 +1,5 @@
 using System.Reflection;
-using FluentValidation;
-using FluentValidation.AspNetCore;
 using MediatR;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using TrialsSystem.UserTaskService.Api.Middlewares;
 using TrialsSystem.UserTaskService.Infrastructure.Context;
@@ -18,6 +13,9 @@ namespace TrialsSystem.UserTaskService.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
 
             // Add services to the container.
 
@@ -49,9 +47,12 @@ namespace TrialsSystem.UserTaskService.Api
 
             builder.Services.AddDbContext<UserTaskDbContext>();
             builder.Services.AddScoped<IUserTaskRepository, UserTaskRepository>();
+            builder.Services.AddSingleton<ILoggerFactory, LoggerFactory>();
+            builder.Services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
 
             var app = builder.Build();
 
+            
             app.UseMiddleware<ExceptionUserTaskMiddleware>();
 
             // Configure the HTTP request pipeline.

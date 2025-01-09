@@ -13,5 +13,9 @@ namespace TrialsSystem.UsersService.Infrastructure
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ServiceDbContext).Assembly);
         }
+
+        public ServiceDbContext(DbContextOptions<ServiceDbContext> options): base(options)
+        {
+        }
     }
 }

@@ -27,7 +27,7 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         /// </summary>
         /// <param name="userId">authorized user Id</param>
         /// <param name="email">part of email (filter)</param>
-        /// <param name="pg">pagination parameters
+        /// <param name="pg">pagination parameters</param>
         /// <returns>List of all users</returns>
         /// <response code="200">Success</response>
         /// <response code="400">No users are found</response>

@@ -8,16 +8,18 @@ namespace TrialsSystem.UsersService.Api.Middlewares
     public class ExceptionUsersServiceMiddleware
     {
         private readonly ILogger<ExceptionUsersServiceMiddleware> _logger;
-        public ExceptionUsersServiceMiddleware(ILogger<ExceptionUsersServiceMiddleware> logger)
+        private readonly RequestDelegate _next;
+        public ExceptionUsersServiceMiddleware(RequestDelegate next, ILogger<ExceptionUsersServiceMiddleware> logger)
         {
+            _next = next;
             _logger = logger;
         }
 
-        public async Task Invoke(HttpContext context, RequestDelegate next)
+        public async Task Invoke(HttpContext context)
         {
             try
             {
-                await next(context);
+                await _next(context);
             }
             catch(Exception e)
             {

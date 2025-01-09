@@ -1,0 +1,20 @@
+@using System.Diagnostics
+
+@{
+}
+
+<div class="welcome-page">
+    <h1>
+        <img src="~/icon.jpg">
+        Welcome to IdentityServer4
+    </h1>
+
+    <ul>
+        <li>
+            Click <a href="@Url.Action("Login","Account", new {returnUrl=Url.Action("Index","Home")})">here</a> to login.
+        </li>
+        <li>
+            Click <a href="@Url.Action("Register","Account", new {returnUrl=Url.Action("Index","Home")})">here</a> to register.
+        </li>
+    </ul>
+</div>
