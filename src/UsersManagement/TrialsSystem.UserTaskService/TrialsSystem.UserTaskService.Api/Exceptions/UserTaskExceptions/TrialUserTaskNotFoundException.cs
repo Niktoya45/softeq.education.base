@@ -7,9 +7,12 @@ namespace TrialsSystem.UserTaskService.Api.Exceptions.UserTaskExceptions {
     /// </summary>
     public class TrialUserTaskNotFoundException : ServiceException
     {
-        public TrialUserTaskNotFoundException(string id):base($"UserTask with id: {id} is not found")
+        public TrialUserTaskNotFoundException(string uid):base($"UserTasks of user: {uid} are not found")
         {
-            Id  = id;
+        }
+
+        public TrialUserTaskNotFoundException(string name, string uid) : base($"UserTask: {name} of given user is not found")
+        {
         }
     }
 }

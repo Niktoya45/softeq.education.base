@@ -6,7 +6,7 @@ namespace TrialsSystem.UsersService.Api.Application.Commands.CityCommands
     public class DeleteCityCommand : IRequest<Unit>
     {
 
-        public DeleteCityCommand(string id)
+        public DeleteCityCommand(string id, string auserId)
         {
             Id = id;
         }

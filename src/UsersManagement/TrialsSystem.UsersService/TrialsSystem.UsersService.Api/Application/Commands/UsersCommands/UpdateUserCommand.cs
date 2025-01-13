@@ -12,7 +12,10 @@ namespace TrialsSystem.UsersService.Api.Application.Commands.UsersCommands
             DateTime birthDate,
             decimal? weight,
             decimal? height,
-            string cityId
+            string cityId,
+            string genderId,
+            string[] deviceIds,
+            string auserId
             )
 		{
             Id = id;
@@ -22,6 +25,7 @@ namespace TrialsSystem.UsersService.Api.Application.Commands.UsersCommands
             Weight = weight;
             Height = height;
             CityId = cityId;
+            DeviceIds = deviceIds;
 		}
         public string Id { get; }
 
@@ -36,5 +40,9 @@ namespace TrialsSystem.UsersService.Api.Application.Commands.UsersCommands
         public decimal? Height { get; }
 
         public string CityId { get; }
+
+        public string GenderId { get; }
+
+        public string[] DeviceIds { get; }
     }
 }

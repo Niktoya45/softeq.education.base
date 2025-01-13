@@ -1,6 +1,6 @@
 using MediatR;
 using TrialsSystem.UsersService.Infrastructure.Models.CityDTOs;
-using TrialsSystem.UsersService.Api.Application.Queries.QueryParameters;
+using TrialsSystem.UsersService.Infrastructure.Repositories.QueryParameters;
 
 namespace TrialsSystem.UsersService.Api.Application.Queries.CityQueries
 {
@@ -9,10 +9,10 @@ namespace TrialsSystem.UsersService.Api.Application.Queries.CityQueries
 
         public CitiesQuery(Pagination? pagination)
         {
-            Pgn = pagination;
+            Pg = pagination ?? new Pagination();
         }
 
-        public Pagination? Pgn { get; }
+        public Pagination Pg { get; }
 
     }
 }

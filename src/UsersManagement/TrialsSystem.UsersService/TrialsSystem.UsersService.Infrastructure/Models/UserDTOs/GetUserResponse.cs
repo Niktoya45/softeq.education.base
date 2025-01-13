@@ -20,6 +20,8 @@ namespace TrialsSystem.UsersService.Infrastructure.Models.UserDTOs
         public IdNameDto City { get; set; }
        
         public IdNameDto Gender { get; set; }
+       
+        public string[] DevicesSN { get; set; }
 
     }
 }

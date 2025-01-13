@@ -12,5 +12,7 @@ namespace TrialsSystem.UsersService.Infrastructure.Models.DeviceDTOs
         public string TypeId { get; set; }
 
         public string FirmwareVersion { get; set; }
+
+        public string[] UserIds { get; set; }
     }
 }

@@ -12,7 +12,8 @@ namespace TrialsSystem.UsersService.Api.Application.Commands.UsersCommands
             DateTime birthDate,
             decimal? weight,
             decimal? height,
-            string genderId)
+            string genderId,
+            string auserId)
         {
             Email = email;
             Name = name;
@@ -39,7 +40,6 @@ namespace TrialsSystem.UsersService.Api.Application.Commands.UsersCommands
         public decimal? Height { get; }
 
         public string GenderId { get; }
-
 
     }
 }

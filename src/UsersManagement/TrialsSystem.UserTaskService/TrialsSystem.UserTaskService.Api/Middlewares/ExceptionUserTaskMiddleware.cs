@@ -1,4 +1,6 @@
 ﻿using TrialsSystem.UserTaskService.Api.Exceptions.Base;
+using TrialsSystem.UserTaskService.Domain.Exceptions;
+using TrialsSystem.UserTaskService.Infrastructure.Exceptions;
 
 namespace TrialsSystem.UserTaskService.Api.Middlewares
 {
@@ -24,6 +26,22 @@ namespace TrialsSystem.UserTaskService.Api.Middlewares
                 {
                     case ServiceException se:
                         context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                        break;
+
+                    case DomainException de:
+                        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                        break;
+
+                    case InfrastructureException ie:
+
+                        switch (ie) {
+                            case UserTaskExistsException tee:
+                                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                                break;
+                            case InnerDbException dbe:
+                                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                                break;
+                        }
                         break;
 
                     default:

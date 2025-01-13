@@ -3,7 +3,8 @@ using TrialsSystem.UsersService.Infrastructure.Models.DeviceDTOs;
 using MediatR;
 using TrialsSystem.UsersService.Api.Application.Commands.DeviceCommands;
 using TrialsSystem.UsersService.Api.Application.Queries.DeviceQueries;
-using TrialsSystem.UsersService.Api.Application.Queries.QueryParameters;
+using TrialsSystem.UsersService.Infrastructure.Repositories.QueryParameters;
+using TrialsSystem.UsersService.Domain.AggregatesModel.UserAggregate;
 
 namespace TrialsSystem.UsersService.Api.Controllers.v1
 {
@@ -22,8 +23,7 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         /// Get all device names
         /// </summary>
         /// <param name="userId">authorized user id</param>
-        /// <param name="skip">skip items (pagination parameters)</param>
-        /// <param name="take">take items (pagination parameters)</param>
+        /// <param name="pg">pagination parameters</param>
         /// <returns>List of all devices</returns>
         /// <response code="200">Success</response>
         /// <response code="400">No device is found</response>
@@ -32,11 +32,10 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAsync(
             [FromRoute] string userId,
-            [FromQuery] int? skip = 0,
-            [FromQuery] int? take = null
+            [FromQuery] Pagination? pg = null
             )
         {
-            var response = await _mediator.Send(new DevicesQuery(new Pagination(skip, take)));
+            var response = await _mediator.Send(new DevicesQuery(pg));
 
             return Ok(response);
         }
@@ -65,17 +64,21 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         /// <summary>
         /// Post new single device made of request parameters
         /// </summary>
+        /// <param name="userId">authorized user id</param>
         /// <param name="request">request body</param>
         /// <returns>Newly created device instance</returns>
         /// <response code="200">Device added successfully</response>
         [HttpPost]
         [ProducesResponseType(typeof(CreateDeviceResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> PostAsync(CreateDeviceRequest request)
+        public async Task<IActionResult> PostAsync(
+            [FromRoute] string userId,
+            [FromBody] CreateDeviceRequest request)
         {
             var response = await _mediator.Send(new CreateDeviceCommand(request.SerialNumber,
                 request.Model, 
                 request.TypeId,
-                request.FirmwareVersion));
+                request.FirmwareVersion,
+                userId));
 
             return Ok(response);
         }
@@ -83,6 +86,7 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         /// <summary>
         /// Update single device by its id with provided request parameters
         /// </summary>
+        /// <param name = "userId" > authorized user id</param>
         /// <param name="id">id of device to be updated</param>
         /// <param name="request">request body</param>
         /// <returns>Updated device instance</returns>
@@ -92,15 +96,18 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         [ProducesResponseType(typeof(UpdateDeviceResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutAsync(
+            [FromRoute] string userId,
             [FromRoute] string id,
-            UpdateDeviceRequest request
+            [FromBody] UpdateDeviceRequest request
             )
         {
             var response = await _mediator.Send(new UpdateDeviceCommand(id, 
                 request.SerialNumber,
                 request.Model,
                 request.TypeId,
-                request.FirmwareVersion));
+                request.FirmwareVersion,
+                request.UserIds,
+                userId));
 
             return Ok(response);
         }
@@ -108,6 +115,7 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         /// <summary>
         /// Delete single device instance by its id
         /// </summary>
+        /// <param name = "userId" > authorized user id</param>
         /// <param name="id">id of device to be deleted</param>
         /// <returns></returns>
         /// <response code="200">Device removed successfully</response>
@@ -115,9 +123,11 @@ namespace TrialsSystem.UsersService.Api.Controllers.v1
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteAsync([FromRoute] string id)
+        public async Task<IActionResult> DeleteAsync(
+            [FromRoute] string userId,
+            [FromRoute] string id)
         {
-            await _mediator.Send(new DeleteDeviceCommand(id));
+            await _mediator.Send(new DeleteDeviceCommand(id, userId));
 
             return Ok();
         }

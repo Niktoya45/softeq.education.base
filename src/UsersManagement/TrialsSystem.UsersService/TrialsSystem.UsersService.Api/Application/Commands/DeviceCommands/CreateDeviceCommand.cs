@@ -9,7 +9,8 @@ namespace TrialsSystem.UsersService.Api.Application.Commands.DeviceCommands
         public CreateDeviceCommand(string serialNumber, 
             string model, 
             string typeId, 
-            string firmwareVersion)
+            string firmwareVersion,
+            string auserId)
         {
             SerialNumber = serialNumber; 
             Model = model;

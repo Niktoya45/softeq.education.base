@@ -1,11 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Application\Commands\Abstractions\**" />
+    <Compile Remove="Application\Queries\QueryParameters\**" />
+    <Content Remove="Application\Commands\Abstractions\**" />
+    <Content Remove="Application\Queries\QueryParameters\**" />
+    <EmbeddedResource Remove="Application\Commands\Abstractions\**" />
+    <EmbeddedResource Remove="Application\Queries\QueryParameters\**" />
+    <None Remove="Application\Commands\Abstractions\**" />
+    <None Remove="Application\Queries\QueryParameters\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />

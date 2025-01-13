@@ -4,7 +4,7 @@ namespace TrialsSystem.UsersService.Api.Application.Commands.UsersCommands
 {
     public class DeleteUserCommand : IRequest<Unit> {
 
-        public DeleteUserCommand(string id) {
+        public DeleteUserCommand(string id, string auserId) {
             Id = id;
         }
 

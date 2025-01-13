@@ -9,7 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <Compile Remove="Application\Queries\QueryParameters\**" />
+    <Content Remove="Application\Queries\QueryParameters\**" />
+    <EmbeddedResource Remove="Application\Queries\QueryParameters\**" />
+    <None Remove="Application\Queries\QueryParameters\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
     <PackageReference Include="MediatR" Version="11.0.0" />
@@ -19,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TrialsSystem.UserTaskService.Domain\TrialsSystem.UserTaskService.Domain.csproj" />
     <ProjectReference Include="..\TrialsSystem.UserTaskService.Infrastructure\TrialsSystem.UserTaskService.Infrastructure.csproj" />
   </ItemGroup>
 

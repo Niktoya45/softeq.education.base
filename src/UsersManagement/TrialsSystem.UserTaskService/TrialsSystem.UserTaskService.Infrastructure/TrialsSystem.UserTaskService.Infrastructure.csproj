@@ -7,5 +7,30 @@
     <DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Mapping\**" />
+    <Compile Remove="Repositories\AdditionalParameters\**" />
+    <EmbeddedResource Remove="Mapping\**" />
+    <EmbeddedResource Remove="Repositories\AdditionalParameters\**" />
+    <None Remove="Mapping\**" />
+    <None Remove="Repositories\AdditionalParameters\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Repositories\Implementations\analyzerlog.sarif" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+    <PackageReference Include="MongoDB.Driver" Version="3.0.0" />
+    <PackageReference Include="MongoDB.EntityFrameworkCore" Version="8.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TrialsSystem.UserTaskService.Domain\TrialsSystem.UserTaskService.Domain.csproj" />
+  </ItemGroup>
 
 </Project>

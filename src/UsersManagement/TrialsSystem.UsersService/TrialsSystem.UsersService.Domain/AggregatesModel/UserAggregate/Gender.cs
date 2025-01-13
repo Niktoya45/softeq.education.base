@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using TrialsSystem.UsersService.Domain.AggregatesModel.Base;
 
 namespace TrialsSystem.UsersService.Domain.AggregatesModel.UserAggregate
 {
-    public class Gender
+    public record Gender
     {
         public string Id { get; set; }
         public string Name { get; set; }
