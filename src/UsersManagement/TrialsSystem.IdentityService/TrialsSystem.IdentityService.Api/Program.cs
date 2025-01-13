@@ -1,5 +1,7 @@
 using IdentityServer4;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 
 namespace TrialsSystem.IdentityService.Api
@@ -31,6 +33,47 @@ namespace TrialsSystem.IdentityService.Api
             })
             .AddDeveloperSigningCredential();
 
+            builder.Services.AddAuthentication()
+
+                .AddOpenIdConnect("oidc", "OIDC", options =>
+                {
+                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                    options.SignOutScheme = IdentityServerConstants.SignoutScheme;
+                    options.SaveTokens = true;
+
+                    var providerInfo = builder.Configuration.GetSection("AuthProviders:oidc");
+
+                    options.Authority = providerInfo.GetValue<string>("server");
+                    options.ClientId  = providerInfo.GetValue<string>("clientId");
+                    options.ClientSecret = providerInfo.GetValue<string>("secret");
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        NameClaimType = "name",
+                        RoleClaimType = "role"
+                    };
+                })
+                
+                .AddGoogle("Google", "Google", options =>
+                {
+                    var providerInfo = builder.Configuration.GetSection("AuthProviders:google");
+
+                    options.ClientId = providerInfo.GetValue<string>("clientId");
+                    options.ClientSecret = providerInfo.GetValue<string>("secret");
+
+                });
+
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+            })
+            .AddRoles<IdentityRole>();
+            
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -46,8 +89,10 @@ namespace TrialsSystem.IdentityService.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
+            app.MapDefaultControllerRoute();
             app.MapRazorPages();
 
             app.Run();

@@ -1,0 +1,55 @@
+﻿@using TrialsSystem.IdentityService.Api.Controllers
+@model RegisterViewModel
+
+<div class="login-page">
+    <div class="lead">
+        <h1>Register</h1>
+        <p>Provide registration data</p>
+    </div>
+
+    <partial name="_ValidationSummary" />
+
+    <div class="row">
+
+        <div class="card-body">
+            <form asp-route="Register">
+                <input type="hidden" asp-for="ReturnUrl" />
+
+                <div class="form-group">
+                    <input class="form-control" placeholder="Name" asp-for="Name" autofocus>
+                </div>
+
+                <div class="form-group">
+                    <input class="form-control" placeholder="Surname" asp-for="Surname" autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Birthdate"></label>
+                    <input type="date" class="form-control" asp-for="Birthdate" autofocus>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" class="form-control" placeholder="Password" asp-for="Password" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <input type="password" class="form-control" placeholder="Confirm Password" asp-for="ConfirmPassword" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="CityId">City</label>
+                    <select class="form-control" asp-for="CityId" asp-items="Model.CityList" autofocus></select>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="GenderId">Gender</label>
+                    <select class="form-control" asp-for="GenderId" asp-items="Model.GenderList" autofocus></select>
+                </div>
+
+                <button class="btn btn-primary" name="button" value="register">Register</button>
+                <button class="btn btn-secondary" name="button" value="cancel">Cancel</button>
+            </form>
+        </div>    
+        
+    </div>
+</div>

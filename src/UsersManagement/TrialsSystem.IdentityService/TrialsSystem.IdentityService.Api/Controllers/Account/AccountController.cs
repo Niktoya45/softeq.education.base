@@ -13,10 +13,11 @@ using IdentityServer4.Test;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Identity.Client;
+using TrialsSystem.IdentityService.Infrastructure.Models.UserDTO;
+
 
 namespace TrialsSystem.IdentityService.Api.Controllers
 {
@@ -34,12 +35,15 @@ namespace TrialsSystem.IdentityService.Api.Controllers
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
-
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
         public AccountController(
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
             IEventService events,
+            UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signInManager,
             TestUserStore users = null)
         {
             // if the TestUserStore is not in DI, then we'll just use the global users collection
@@ -50,6 +54,8 @@ namespace TrialsSystem.IdentityService.Api.Controllers
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
             _events = events;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         /// <summary>
@@ -71,7 +77,7 @@ namespace TrialsSystem.IdentityService.Api.Controllers
         }
 
         /// <summary>
-        /// Handle postback from username/password login
+        /// Handle postback from email/password login
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -83,36 +89,15 @@ namespace TrialsSystem.IdentityService.Api.Controllers
             // the user clicked the "cancel" button
             if (button != "login")
             {
-                if (context != null)
-                {
-                    // if the user cancels, send a result back into IdentityServer as if they 
-                    // denied the consent (even if this client does not require consent).
-                    // this will send back an access denied OIDC error response to the client.
-                    await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
-
-                    // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                    if (context.IsNativeClient())
-                    {
-                        // The client is native, so this change in how to
-                        // return the response is for better UX for the end user.
-                        return this.LoadingPage("Redirect", model.ReturnUrl);
-                    }
-
-                    return Redirect(model.ReturnUrl);
-                }
-                else
-                {
-                    // since we don't have a valid context, then we just go back to the home page
-                    return Redirect("~/");
-                }
+                await CancelAndReloadPage(context, model.ReturnUrl);
             }
 
             if (ModelState.IsValid)
             {
-                // validate username/password against in-memory store
-                if (_users.ValidateCredentials(model.Username, model.Password))
+                // validate email/password against in-memory store
+                if (_users.ValidateCredentials(model.Email, model.Password))
                 {
-                    var user = _users.FindByUsername(model.Username);
+                    var user = _users.FindByUsername(model.Email);
                     await _events.RaiseAsync(new UserLoginSuccessEvent(user.Username, user.SubjectId, user.Username, clientId: context?.Client.ClientId));
 
                     // only set explicit expiration here if user chooses "remember me". 
@@ -127,7 +112,7 @@ namespace TrialsSystem.IdentityService.Api.Controllers
                         };
                     };
 
-                    // issue authentication cookie with subject ID and username
+                    // issue authentication cookie with subject ID and username(email)
                     var isuser = new IdentityServerUser(user.SubjectId)
                     {
                         DisplayName = user.Username
@@ -164,7 +149,7 @@ namespace TrialsSystem.IdentityService.Api.Controllers
                     }
                 }
 
-                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials", clientId:context?.Client.ClientId));
+                await _events.RaiseAsync(new UserLoginFailureEvent(model.Email, "invalid credentials", clientId: context?.Client.ClientId));
                 ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
 
@@ -173,7 +158,64 @@ namespace TrialsSystem.IdentityService.Api.Controllers
             return View(vm);
         }
 
-        
+
+        /// <summary>
+        /// Entry point into the register workflow
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> Register(string returnUrl)
+        {
+            var vm = await BuildRegisterViewModelAsync(returnUrl);
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model, string button)
+        {
+
+            var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
+
+            // the user clicked the "cancel" button
+            if (button != "register")
+            {
+                await CancelAndReloadPage(context, model.ReturnUrl);
+            }
+
+            if (ModelState.IsValid)
+            {
+                var user = new IdentityUser { UserName = model.Email, Email = model.Email };
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "Participant");
+                    /*
+                    _?.AddUser(
+                       new CreateUserRequest
+                       {
+                           Email = model.Email,
+                           Name = model.Name,
+                           Surname = model.Surname,
+                           BirthDate = model.Birthdate,
+                           CityId = model.CityId, 
+                           GenderId = model.GenderId
+                       }
+                    );
+                    */
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return LocalRedirect(model.ReturnUrl);
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+            var vm = await BuildRegisterViewModelAsync(model);
+            return View(vm);
+        }
+
         /// <summary>
         /// Show logout page
         /// </summary>
@@ -233,26 +275,6 @@ namespace TrialsSystem.IdentityService.Api.Controllers
             return View();
         }
 
-        /// <summary>
-        /// Show register page
-        /// </summary>
-        [HttpGet]
-        public async Task<IActionResult> Register(string logoutId)
-        {
-            // build a model so the logout page knows what to display
-            var vm = await BuildLogoutViewModelAsync(logoutId);
-
-            if (vm.ShowLogoutPrompt == false)
-            {
-                // if the request for logout was properly authenticated from IdentityServer, then
-                // we don't need to show the prompt and can just log the user out directly.
-                return await Logout(vm);
-            }
-
-            return View(vm);
-        }
-
-
         /*****************************************/
         /* helper APIs for the AccountController */
         /*****************************************/
@@ -268,7 +290,7 @@ namespace TrialsSystem.IdentityService.Api.Controllers
                 {
                     EnableLocalLogin = local,
                     ReturnUrl = returnUrl,
-                    Username = context?.LoginHint,
+                    Email = context?.LoginHint,
                 };
 
                 if (!local)
@@ -309,7 +331,7 @@ namespace TrialsSystem.IdentityService.Api.Controllers
                 AllowRememberLogin = AccountOptions.AllowRememberLogin,
                 EnableLocalLogin = allowLocal && AccountOptions.AllowLocalLogin,
                 ReturnUrl = returnUrl,
-                Username = context?.LoginHint,
+                Email = context?.LoginHint,
                 ExternalProviders = providers.ToArray()
             };
         }
@@ -317,8 +339,32 @@ namespace TrialsSystem.IdentityService.Api.Controllers
         private async Task<LoginViewModel> BuildLoginViewModelAsync(LoginInputModel model)
         {
             var vm = await BuildLoginViewModelAsync(model.ReturnUrl);
-            vm.Username = model.Username;
+            vm.Email = model.Email;
             vm.RememberLogin = model.RememberLogin;
+            return vm;
+        }
+
+        private async Task<RegisterViewModel> BuildRegisterViewModelAsync(string returnUrl)
+        {
+            var vm = new RegisterViewModel {  ReturnUrl = returnUrl };
+
+            // vm.CityList = await _?.GetCityList();
+            // vm.GenderList = await _?.GetGenderList();
+
+            return vm;
+        }
+
+        private async Task<RegisterViewModel> BuildRegisterViewModelAsync(RegisterInputModel model)
+        {
+            var vm = await BuildRegisterViewModelAsync(model.ReturnUrl);
+
+            vm.Name = model.Name;
+            vm.Surname = model.Surname;
+            vm.Email = model.Email;
+            vm.Birthdate = model.Birthdate;
+            vm.CityId = model.CityId;
+            vm.GenderId = model.GenderId;
+            
             return vm;
         }
 
@@ -382,6 +428,32 @@ namespace TrialsSystem.IdentityService.Api.Controllers
             }
 
             return vm;
+        }
+
+        private async Task<IActionResult> CancelAndReloadPage(AuthorizationRequest context, string returnUrl) 
+        {
+            if (context != null)
+            {
+                // if the user cancels, send a result back into IdentityServer as if they 
+                // denied the consent (even if this client does not require consent).
+                // this will send back an access denied OIDC error response to the client.
+                await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
+
+                // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
+                if (context.IsNativeClient())
+                {
+                    // The client is native, so this change in how to
+                    // return the response is for better UX for the end user.
+                    return this.LoadingPage("Redirect", returnUrl);
+                }
+
+                return Redirect(returnUrl);
+            }
+            else
+            {
+                // since we don't have a valid context, then we just go back to the home page
+                return Redirect("~/");
+            }
         }
     }
 }
