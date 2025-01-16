@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using TrialsSystem.IdentityService.Infrastructure.Models.UserDTO;
+using TrialsSystem.IdentityService.Infrastructure.AggregatesModel;
 
 
 namespace TrialsSystem.IdentityService.Api.Controllers
@@ -30,26 +31,20 @@ namespace TrialsSystem.IdentityService.Api.Controllers
     [AllowAnonymous]
     public class AccountController : Controller
     {
-        private readonly TestUserStore _users;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         public AccountController(
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
             IEventService events,
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
-            TestUserStore users = null)
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
         {
-            // if the TestUserStore is not in DI, then we'll just use the global users collection
-            // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
-            _users = users ?? new TestUserStore(TestUsers.Users);
-
             _interaction = interaction;
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
@@ -94,31 +89,12 @@ namespace TrialsSystem.IdentityService.Api.Controllers
 
             if (ModelState.IsValid)
             {
-                // validate email/password against in-memory store
-                if (_users.ValidateCredentials(model.Email, model.Password))
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberLogin, lockoutOnFailure:true);
+                
+                if (result.Succeeded)
                 {
-                    var user = _users.FindByUsername(model.Email);
-                    await _events.RaiseAsync(new UserLoginSuccessEvent(user.Username, user.SubjectId, user.Username, clientId: context?.Client.ClientId));
-
-                    // only set explicit expiration here if user chooses "remember me". 
-                    // otherwise we rely upon expiration configured in cookie middleware.
-                    AuthenticationProperties props = null;
-                    if (AccountOptions.AllowRememberLogin && model.RememberLogin)
-                    {
-                        props = new AuthenticationProperties
-                        {
-                            IsPersistent = true,
-                            ExpiresUtc = DateTimeOffset.UtcNow.Add(AccountOptions.RememberMeLoginDuration)
-                        };
-                    };
-
-                    // issue authentication cookie with subject ID and username(email)
-                    var isuser = new IdentityServerUser(user.SubjectId)
-                    {
-                        DisplayName = user.Username
-                    };
-
-                    await HttpContext.SignInAsync(isuser, props);
+                    ApplicationUser? user = await _userManager.FindByNameAsync(model.Email);
+                    await _events.RaiseAsync(new UserLoginSuccessEvent(user!.UserName, user.Id.ToString(), user.UserName, clientId: context?.Client.ClientId));
 
                     if (context != null)
                     {
@@ -185,7 +161,7 @@ namespace TrialsSystem.IdentityService.Api.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
@@ -248,7 +224,7 @@ namespace TrialsSystem.IdentityService.Api.Controllers
             if (User?.Identity.IsAuthenticated == true)
             {
                 // delete local authentication cookie
-                await HttpContext.SignOutAsync();
+                await _signInManager.SignOutAsync();
 
                 // raise the logout event
                 await _events.RaiseAsync(new UserLogoutSuccessEvent(User.GetSubjectId(), User.GetDisplayName()));

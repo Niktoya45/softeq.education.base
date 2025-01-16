@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
+using TrialsSystem.IdentityService.Infrastructure.AggregatesModel;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace TrialsSystem.IdentityService.Api
 {
@@ -19,6 +21,23 @@ namespace TrialsSystem.IdentityService.Api
             builder.Services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
 
             string? dbconn_str = builder.Configuration.GetConnectionString("SqlServer");
+
+            builder.Services.AddDbContext<ApplicationUserDbContext>(options =>
+            {
+                options.UseSqlServer(dbconn_str);
+            });
+
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationUserDbContext>();
+            
             builder.Services.AddIdentityServer()
             .AddConfigurationStore(options =>
             {
@@ -35,22 +54,20 @@ namespace TrialsSystem.IdentityService.Api
 
             builder.Services.AddAuthentication()
 
-                .AddOpenIdConnect("oidc", "OIDC", options =>
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
-                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-                    options.SignOutScheme = IdentityServerConstants.SignoutScheme;
-                    options.SaveTokens = true;
-
-                    var providerInfo = builder.Configuration.GetSection("AuthProviders:oidc");
-
-                    options.Authority = providerInfo.GetValue<string>("server");
-                    options.ClientId  = providerInfo.GetValue<string>("clientId");
-                    options.ClientSecret = providerInfo.GetValue<string>("secret");
+                    options.Authority = builder.Configuration.GetSection("AuthProviders:jwt").GetValue<string>("server");
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        NameClaimType = "name",
-                        RoleClaimType = "role"
+
+                        ValidateAudience = false,
+                        ValidateIssuer = false,
+                        AuthenticationType = "at+jwt",
+                        SaveSigninToken = true,
+
                     };
                 })
                 
@@ -63,16 +80,6 @@ namespace TrialsSystem.IdentityService.Api
 
                 });
 
-            builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
-            {
-                options.Password.RequireDigit = true;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequiredLength = 6;
-                options.Password.RequireNonAlphanumeric = false;
-            })
-            .AddRoles<IdentityRole>();
-            
 
             var app = builder.Build();
 
