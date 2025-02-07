@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\TestUsers.cs" />
     <Compile Remove="TestUsers.cs" />
   </ItemGroup>
 

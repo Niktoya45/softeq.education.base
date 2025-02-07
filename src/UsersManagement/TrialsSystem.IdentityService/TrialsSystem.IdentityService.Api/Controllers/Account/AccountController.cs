@@ -37,13 +37,15 @@ namespace TrialsSystem.IdentityService.Api.Controllers
         private readonly IEventService _events;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         public AccountController(
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
             IEventService events,
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _interaction = interaction;
             _clientStore = clientStore;
@@ -51,6 +53,16 @@ namespace TrialsSystem.IdentityService.Api.Controllers
             _events = events;
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
+
+            string[] role_names = { "Participant", "Observer", "Admin", "SystemAdmin", "Placebo" };
+            foreach (string role_name in role_names)
+            {
+                if (!_roleManager.RoleExistsAsync(role_name).Result)
+                {
+                    _roleManager.CreateAsync(new IdentityRole() { Name = role_name }).Wait();
+                }
+            }
         }
 
         /// <summary>

@@ -39,6 +39,9 @@ namespace TrialsSystem.IdentityService.Api
             .AddEntityFrameworkStores<ApplicationUserDbContext>();
             
             builder.Services.AddIdentityServer()
+            .AddInMemoryApiScopes(IdentityConfig.ApiScopes)
+            .AddInMemoryIdentityResources(IdentityConfig.IdentityResources)
+            .AddInMemoryClients(IdentityConfig.Clients)
             .AddConfigurationStore(options =>
             {
                 options.ConfigureDbContext = ctxb =>
