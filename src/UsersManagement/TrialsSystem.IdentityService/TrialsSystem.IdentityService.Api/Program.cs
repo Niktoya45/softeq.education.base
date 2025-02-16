@@ -1,10 +1,12 @@
-using IdentityServer4;
-using Microsoft.AspNetCore.Identity;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Reflection;
-using TrialsSystem.IdentityService.Infrastructure.AggregatesModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using IdentityServer4;
+using TrialsSystem.IdentityService.Infrastructure;
+using TrialsSystem.IdentityService.Infrastructure.AggregatesModel;
+
 
 namespace TrialsSystem.IdentityService.Api
 {
@@ -20,7 +22,9 @@ namespace TrialsSystem.IdentityService.Api
             builder.Services.AddSingleton<ILoggerFactory, LoggerFactory>();
             builder.Services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
 
-            string? dbconn_str = builder.Configuration.GetConnectionString("SqlServer");
+            string? dbconn_str = builder.Configuration.GetConnectionString("SqlServer")
+                .Replace("(Project)", ApplicationUserDbContext.DefinedIn.Replace("Api", "Infrastructure"))
+                .Replace("(CurrentUser)", Environment.UserName);
 
             builder.Services.AddDbContext<ApplicationUserDbContext>(options =>
             {
@@ -53,6 +57,7 @@ namespace TrialsSystem.IdentityService.Api
                    ctxb.UseSqlServer(dbconn_str,
                       sql => sql.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName));
             })
+            .AddAspNetIdentity<ApplicationUser>()
             .AddDeveloperSigningCredential();
 
             builder.Services.AddAuthentication()

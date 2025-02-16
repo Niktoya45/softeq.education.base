@@ -8,5 +8,6 @@ namespace TrialsSystem.IdentityService.Api.Controllers
     public class RedirectViewModel
     {
         public string RedirectUrl { get; set; }
+
     }
 }

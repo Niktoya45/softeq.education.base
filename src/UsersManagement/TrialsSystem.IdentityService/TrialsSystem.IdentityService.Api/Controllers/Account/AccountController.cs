@@ -9,7 +9,6 @@ using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
-using IdentityServer4.Test;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -154,6 +153,12 @@ namespace TrialsSystem.IdentityService.Api.Controllers
         public async Task<IActionResult> Register(string returnUrl)
         {
             var vm = await BuildRegisterViewModelAsync(returnUrl);
+
+            if (vm.IsExternalRegistrationOnly)
+            {
+                // we only have one option for logging in and it's an external provider
+                return RedirectToAction("Challenge", "External", new { scheme = vm.ExternalRegistrationScheme, returnUrl });
+            }
 
             return View(vm);
         }

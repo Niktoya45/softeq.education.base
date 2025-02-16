@@ -15,14 +15,14 @@ namespace TrialsSystem.UserTaskService.Infrastructure.Context
         public UserTaskDbContext(DbContextOptions opts, DbContextConfig cfg) : base(opts)
         {
             _mongodb = new MongoClient(cfg.ConnectionString).GetDatabase(cfg.DatabaseName);
+
+            UserTasks = _mongodb.GetCollection<UserTask>("UserTasks");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder dbctxob)
         {
 
             dbctxob.UseMongoDB(_mongodb.Client, _mongodb.DatabaseNamespace.DatabaseName);
-
-            UserTasks = _mongodb.GetCollection<UserTask>("UserTasks");
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
