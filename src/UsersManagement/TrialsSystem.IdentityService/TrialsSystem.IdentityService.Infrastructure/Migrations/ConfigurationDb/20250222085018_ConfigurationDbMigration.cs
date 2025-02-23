@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TrialsSystem.IdentityService.Api.Migrations
+namespace TrialsSystem.IdentityService.Infrastructure.Migrations.ConfigurationDb
 {
     /// <inheritdoc />
-    public partial class IdentityServerConfigurationDbMigration : Migration
+    public partial class ConfigurationDbMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using IdentityServer4;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using TrialsSystem.IdentityService.Infrastructure;
 using TrialsSystem.IdentityService.Infrastructure.AggregatesModel;
-
 
 namespace TrialsSystem.IdentityService.Api
 {
@@ -40,22 +40,20 @@ namespace TrialsSystem.IdentityService.Api
                 options.Password.RequireNonAlphanumeric = false;
             })
             .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<ApplicationUserDbContext>();
+            .AddEntityFrameworkStores<ApplicationUserDbContext>()
+            .AddDefaultTokenProviders();
             
             builder.Services.AddIdentityServer()
-            .AddInMemoryApiScopes(IdentityConfig.ApiScopes)
-            .AddInMemoryIdentityResources(IdentityConfig.IdentityResources)
-            .AddInMemoryClients(IdentityConfig.Clients)
             .AddConfigurationStore(options =>
             {
                 options.ConfigureDbContext = ctxb =>
                     ctxb.UseSqlServer(dbconn_str,
-                       sql => sql.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName));
+                       sql => sql.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName.Replace("Api", "Infrastructure")));
             })
             .AddOperationalStore(options => {
                 options.ConfigureDbContext = ctxb =>
                    ctxb.UseSqlServer(dbconn_str,
-                      sql => sql.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName));
+                      sql => sql.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName.Replace("Api", "Infrastructure")));
             })
             .AddAspNetIdentity<ApplicationUser>()
             .AddDeveloperSigningCredential();
@@ -73,6 +71,7 @@ namespace TrialsSystem.IdentityService.Api
 
                         ValidateAudience = false,
                         ValidateIssuer = false,
+                        ValidateIssuerSigningKey = false,
                         AuthenticationType = "at+jwt",
                         SaveSigninToken = true,
 
@@ -88,6 +87,7 @@ namespace TrialsSystem.IdentityService.Api
 
                 });
 
+            builder.Services.AddAuthorization();
 
             var app = builder.Build();
 
@@ -104,11 +104,15 @@ namespace TrialsSystem.IdentityService.Api
 
             app.UseRouting();
 
+            app.UseCors();
+            app.UseIdentityServer();
+
             app.UseAuthentication();
-            app.UseAuthorization();
 
             app.MapDefaultControllerRoute();
             app.MapRazorPages();
+
+            app.InitializeDatabase();
 
             app.Run();
         }

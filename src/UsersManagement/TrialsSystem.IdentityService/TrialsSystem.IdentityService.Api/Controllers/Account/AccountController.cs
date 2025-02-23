@@ -17,14 +17,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using TrialsSystem.IdentityService.Infrastructure.Models.UserDTO;
 using TrialsSystem.IdentityService.Infrastructure.AggregatesModel;
+using Microsoft.AspNetCore.Http.Headers;
+using System.Net.Http.Headers;
 
 
 namespace TrialsSystem.IdentityService.Api.Controllers
 {
     /// <summary>
     /// This sample controller implements a typical login/logout/provision workflow for local and external accounts.
-    /// The login service encapsulates the interactions with the user data store. This data store is in-memory only and cannot be used for production!
-    /// The interaction service provides a way for the UI to communicate with identityserver for validation and context retrieval
     /// </summary>
     [SecurityHeaders]
     [AllowAnonymous]
@@ -123,7 +123,11 @@ namespace TrialsSystem.IdentityService.Api.Controllers
                     // request for a local page
                     if (Url.IsLocalUrl(model.ReturnUrl))
                     {
-                        return Redirect(model.ReturnUrl);
+                        var headers = HttpContext.Request.Headers.ToList();
+                        var headers2 = HttpContext.Response.Headers.ToList();
+                        var cookies = HttpContext.Request.Cookies.ToList();
+                        string? access_token = await HttpContext.GetTokenAsync("access_token");
+                        return Redirect("https://localhost:7080/api/v1" + (model.ReturnUrl == @"/" ? "/Home/" : model.ReturnUrl));
                     }
                     else if (string.IsNullOrEmpty(model.ReturnUrl))
                     {
