@@ -77,7 +77,7 @@ namespace TrialsSystem.IdentityService.Api
 
                     };
                 })
-                
+
                 .AddGoogle("Google", "Google", options =>
                 {
                     var providerInfo = builder.Configuration.GetSection("AuthProviders:google");

@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="IdentityServer4.mdf" />
+    <None Remove="IdentityServer4_log.ldf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Cnblogs.IdentityServer4.EntityFramework" Version="4.2.1" />
     <PackageReference Include="Cnblogs.IdentityServer4.EntityFramework.Storage" Version="4.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />

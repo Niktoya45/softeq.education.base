@@ -19,6 +19,8 @@ using TrialsSystem.IdentityService.Infrastructure.Models.UserDTO;
 using TrialsSystem.IdentityService.Infrastructure.AggregatesModel;
 using Microsoft.AspNetCore.Http.Headers;
 using System.Net.Http.Headers;
+using IdentityModel.Client;
+using IdentityServer4.EntityFramework.Entities;
 
 
 namespace TrialsSystem.IdentityService.Api.Controllers
@@ -124,9 +126,17 @@ namespace TrialsSystem.IdentityService.Api.Controllers
                     if (Url.IsLocalUrl(model.ReturnUrl))
                     {
                         var headers = HttpContext.Request.Headers.ToList();
-                        var headers2 = HttpContext.Response.Headers.ToList();
-                        var cookies = HttpContext.Request.Cookies.ToList();
-                        string? access_token = await HttpContext.GetTokenAsync("access_token");
+                        var props = (await HttpContext.AuthenticateAsync()).Properties.Items;
+
+                        var response_token = await (new HttpClient()).RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
+                        {
+                            Address = "https://localhost:7140/connect/token",
+
+                            ClientId = "web",
+                            ClientSecret = "2690f3da7a6ec35fca895ec4c9ff319d74a94aba85ada869750f5a7fa6b23907",
+                            Scope = "gateway_api"
+                        });
+
                         return Redirect("https://localhost:7080/api/v1" + (model.ReturnUrl == @"/" ? "/Home/" : model.ReturnUrl));
                     }
                     else if (string.IsNullOrEmpty(model.ReturnUrl))

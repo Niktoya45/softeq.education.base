@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
+using Microsoft.CodeAnalysis.Elfie.Extensions;
 
 namespace TrialsSystem.GatewayService.Api
 {
@@ -33,6 +34,7 @@ namespace TrialsSystem.GatewayService.Api
             );
 
             builder.Services.AddAuthentication()
+                .AddCookie()
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
                     options.Authority = builder.Configuration.GetSection("AuthProviders:jwt").GetValue<string>("server");
@@ -49,7 +51,6 @@ namespace TrialsSystem.GatewayService.Api
 
                     };
                 });
-
 
             builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, TestAuthorizationMiddlewareResultHandler>();
             builder.Services.AddAuthorization();

@@ -13,7 +13,7 @@ public class TestAuthorizationMiddlewareResultHandler : IAuthorizationMiddleware
         AuthorizationPolicy policy,
         PolicyAuthorizationResult authorizeResult)
     {
-
+        var user = context.User;
         if (authorizeResult.Challenged) {
             var headers = context.Request.Headers.ToList();
         }
