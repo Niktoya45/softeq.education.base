@@ -128,16 +128,7 @@ namespace TrialsSystem.IdentityService.Api.Controllers
                         var headers = HttpContext.Request.Headers.ToList();
                         var props = (await HttpContext.AuthenticateAsync()).Properties.Items;
 
-                        var response_token = await (new HttpClient()).RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
-                        {
-                            Address = "https://localhost:7140/connect/token",
-
-                            ClientId = "web",
-                            ClientSecret = "2690f3da7a6ec35fca895ec4c9ff319d74a94aba85ada869750f5a7fa6b23907",
-                            Scope = "gateway_api"
-                        });
-
-                        return Redirect("https://localhost:7080/api/v1" + (model.ReturnUrl == @"/" ? "/Home/" : model.ReturnUrl));
+                        return Redirect(model.ReturnUrl);
                     }
                     else if (string.IsNullOrEmpty(model.ReturnUrl))
                     {

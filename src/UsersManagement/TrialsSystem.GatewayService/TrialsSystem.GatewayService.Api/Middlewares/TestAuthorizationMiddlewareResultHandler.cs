@@ -16,6 +16,7 @@ public class TestAuthorizationMiddlewareResultHandler : IAuthorizationMiddleware
         var user = context.User;
         if (authorizeResult.Challenged) {
             var headers = context.Request.Headers.ToList();
+
         }
 
         // 404 response

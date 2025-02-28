@@ -24,6 +24,41 @@ namespace TrialsSystem.IdentityService.Infrastructure
         public static IEnumerable<Client> Clients =>
             new List<Client>
             {
+                new Client 
+                {
+                    ClientId = "test",
+                    ClientSecrets = { new Secret("test_secret".Sha256()) },
+
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequirePkce = false,
+
+                    RedirectUris = { "https://localhost:7080/api/v1/Home",
+                                     "https://localhost:7080/signin-oidc",
+                                     "https://localhost:7140",
+                                     "https://localhost:7140/signin-oidc",
+                                     "https://localhost:7080",
+                                     "http://localhost:5235",
+                                     "https://localhost:8080",
+                                     "http://localhost:3000"},
+
+                    PostLogoutRedirectUris = { "https://localhost:7140",
+                                     "https://localhost:7080/signout-callback-oidc",
+                                     "https://localhost:7140/signout-callback-oidc",
+                                     "https://localhost:7080",
+                                     "http://localhost:5235",
+                                     "https://localhost:8080",
+                                     "http://localhost:3000" },
+
+                    AllowedScopes = new List<string>
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
+                        "identity_api",
+                        "gateway_api"
+                    }
+                },
+
                 new Client
                 {
                     ClientId = "web",

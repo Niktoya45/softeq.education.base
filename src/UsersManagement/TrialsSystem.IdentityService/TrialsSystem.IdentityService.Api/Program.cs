@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TrialsSystem.IdentityService.Infrastructure;
 using TrialsSystem.IdentityService.Infrastructure.AggregatesModel;
+using TrialsSystem.IdentityService.Api.Profiles;
+using IdentityServer4.Services;
 
 namespace TrialsSystem.IdentityService.Api
 {
@@ -26,6 +28,11 @@ namespace TrialsSystem.IdentityService.Api
                 .Replace("(Project)", ApplicationUserDbContext.DefinedIn.Replace("Api", "Infrastructure"))
                 .Replace("(CurrentUser)", Environment.UserName);
 
+            builder.Services.ConfigureApplicationCookie(options => {
+                options.Cookie.SameSite = SameSiteMode.Lax;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
+
             builder.Services.AddDbContext<ApplicationUserDbContext>(options =>
             {
                 options.UseSqlServer(dbconn_str);
@@ -42,7 +49,17 @@ namespace TrialsSystem.IdentityService.Api
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationUserDbContext>()
             .AddDefaultTokenProviders();
-            
+
+            builder.Services.AddCors(options =>
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                }
+                )
+            );
+
             builder.Services.AddIdentityServer()
             .AddConfigurationStore(options =>
             {
@@ -56,6 +73,7 @@ namespace TrialsSystem.IdentityService.Api
                       sql => sql.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName.Replace("Api", "Infrastructure")));
             })
             .AddAspNetIdentity<ApplicationUser>()
+            .AddProfileService<ApplicationUserProfile>()
             .AddDeveloperSigningCredential();
 
             builder.Services.AddAuthentication()
@@ -101,17 +119,23 @@ namespace TrialsSystem.IdentityService.Api
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            
 
             app.UseRouting();
 
             app.UseCors();
-            app.UseIdentityServer();
+            app.UseCookiePolicy(new CookiePolicyOptions { 
+                MinimumSameSitePolicy = SameSiteMode.Lax,
+                Secure = CookieSecurePolicy.Always
+            });
 
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapDefaultControllerRoute();
             app.MapRazorPages();
 
+            app.UseIdentityServer();
             app.InitializeDatabase();
 
             app.Run();

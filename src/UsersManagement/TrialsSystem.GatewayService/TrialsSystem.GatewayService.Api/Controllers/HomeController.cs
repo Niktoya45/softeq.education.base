@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -16,9 +17,18 @@ public class HomeController : Controller
     {
         _logger = logger;
     }
+
     [HttpGet]
-    [Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme, Roles="Participant")]
-    public IActionResult Index() {
+    public IActionResult Index()
+    {
+        return View("Message", new MessageViewModel { Message = "Welcome!" }); ;
+    }
+
+    [HttpGet("test-protected")]
+    [Authorize(AuthenticationSchemes=OpenIdConnectDefaults.AuthenticationScheme, Roles="Participant")]
+    public IActionResult TestProtected() {
+
+        var claims = HttpContext.User.Claims;
 
         return View("Message",new MessageViewModel { Message = "Success!"});
     }
