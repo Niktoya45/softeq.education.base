@@ -1,0 +1,21 @@
+@using System.Diagnostics
+
+@{
+    string? ReturnUrl = Context.Request.Query["ReturnUrl"].FirstOrDefault();
+    string? DefaultReturnUrl = Url.Action("Index", "Home");
+}
+
+<div class="welcome-page">
+    <h1>
+        Welcome to IdentityServer4
+    </h1>
+
+    <ul>
+        <li>
+            Click <a href="@Url.Action("Login","Account", new {returnUrl=ReturnUrl??DefaultReturnUrl})">here</a> to login.
+        </li>
+        <li>
+            Click <a href="@Url.Action("Register","Account", new {returnUrl=ReturnUrl??DefaultReturnUrl})">here</a> to register.
+        </li>
+    </ul>
+</div>

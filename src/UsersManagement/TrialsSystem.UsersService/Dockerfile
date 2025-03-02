@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 
 WORKDIR /src
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 COPY ["UsersManagement/TrialsSystem.UsersService/TrialsSystem.UsersService.Api/*.csproj", "UsersManagement/TrialsSystem.UsersService/TrialsSystem.UsersService.Api/"]
 COPY ["UsersManagement/TrialsSystem.UsersService/TrialsSystem.UsersService.Domain/*.csproj", "UsersManagement/TrialsSystem.UsersService/TrialsSystem.UsersService.Domain/"]

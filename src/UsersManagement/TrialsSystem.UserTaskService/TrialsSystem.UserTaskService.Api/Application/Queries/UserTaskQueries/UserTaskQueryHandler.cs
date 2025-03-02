@@ -11,7 +11,7 @@ namespace TrialsSystem.UserTaskService.Api.Application.Queries.UserTaskQueries
     {
         IUserTaskRepository _repository;
         IMapper _mapper;
-        public UserTaskQueryHandler(IUserTaskRepository repository)
+        public UserTaskQueryHandler(IUserTaskRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
