@@ -30,7 +30,7 @@ namespace TrialsSystem.IdentityService.Infrastructure
                     ClientSecrets = { new Secret("test_secret".Sha256()) },
 
                     AllowedGrantTypes = GrantTypes.Code,
-                    RequirePkce = false,
+                    RequirePkce = true,
 
                     RedirectUris = { "https://localhost:7080/api/v1/Home",
                                      "https://localhost:7080/signin-oidc",

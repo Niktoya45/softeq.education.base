@@ -1,14 +1,19 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using FluentValidation.AspNetCore;
+using IdentityServer4.Services;
 using TrialsSystem.IdentityService.Infrastructure;
 using TrialsSystem.IdentityService.Infrastructure.AggregatesModel;
 using TrialsSystem.IdentityService.Api.Profiles;
-using IdentityServer4.Services;
+using FluentValidation;
+
+
 
 namespace TrialsSystem.IdentityService.Api
 {
@@ -23,6 +28,9 @@ namespace TrialsSystem.IdentityService.Api
 
             builder.Services.AddSingleton<ILoggerFactory, LoggerFactory>();
             builder.Services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
+
+            builder.Services.AddFluentValidationAutoValidation();
+            builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             string? dbconn_str = builder.Configuration.GetConnectionString("SqlServer")
                 .Replace("(Project)", ApplicationUserDbContext.DefinedIn.Replace("Api", "Infrastructure"))
@@ -59,6 +67,12 @@ namespace TrialsSystem.IdentityService.Api
                 }
                 )
             );
+
+            builder.Services
+                .ConfigureApplicationCookie(options =>
+                {
+                    options.LoginPath = "/Home/Index";
+                });
 
             builder.Services.AddIdentityServer()
             .AddConfigurationStore(options =>
@@ -98,10 +112,10 @@ namespace TrialsSystem.IdentityService.Api
 
                 .AddGoogle("Google", "Google", options =>
                 {
-                    var providerInfo = builder.Configuration.GetSection("AuthProviders:google");
+                    var google = builder.Configuration.GetSection("AuthProviders:google");
 
-                    options.ClientId = providerInfo.GetValue<string>("clientId");
-                    options.ClientSecret = providerInfo.GetValue<string>("secret");
+                    options.ClientId = google.GetValue<string>("clientId");
+                    options.ClientSecret = google.GetValue<string>("secret");
 
                 });
 

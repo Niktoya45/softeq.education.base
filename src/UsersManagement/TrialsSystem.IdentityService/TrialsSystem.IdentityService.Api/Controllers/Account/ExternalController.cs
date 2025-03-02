@@ -89,7 +89,7 @@ namespace TrialsSystem.IdentityService.Api.Controllers
             var result = await HttpContext.AuthenticateAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
             if (result?.Succeeded != true)
             {
-                throw new Exception("External authentication error");
+                throw result.Failure??(new Exception("Something went wrong and server doesn't know why."));
             }
 
             if (_logger.IsEnabled(LogLevel.Debug))

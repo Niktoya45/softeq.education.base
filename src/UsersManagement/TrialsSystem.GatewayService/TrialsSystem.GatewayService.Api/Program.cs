@@ -41,31 +41,46 @@ namespace TrialsSystem.GatewayService.Api
             builder.Services
                 .ConfigureApplicationCookie(options =>
                 {
-                    options.LoginPath = builder.Configuration.GetSection("AuthProviders:jwt").GetValue<string>("server");
                     options.Cookie.SameSite = SameSiteMode.Lax;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                     options.SlidingExpiration = true;
                 });
 
-
-            builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, TestAuthorizationMiddlewareResultHandler>();
-
             builder.Services.AddAuthentication(options => {
 
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-                
+                options.DefaultScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+               
                 })
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie()
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                {
+                    options.Authority = builder.Configuration.GetValue<string>("AuthProviders:jwt:issuer");
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+
+                        ValidateAudience = false,
+                        ValidateIssuer = false,
+                        ValidateIssuerSigningKey = false,
+                        AuthenticationType = "at+jwt",
+                        SaveSigninToken = true,
+
+                    };
+                })
                 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
                 {
-                    options.Authority = builder.Configuration.GetSection("AuthProviders:oidc").GetValue<string>("server");
+                    var oidc = builder.Configuration.GetSection("AuthProviders:oidc");
+                    options.Authority = oidc.GetValue<string>("server");
                     options.RequireHttpsMetadata = false;
 
-                    options.ClientId = "<client>";
-                    options.ClientSecret = "<secret>";
+                    options.ClientId = oidc.GetValue<string>("clientId");
+                    options.ClientSecret = oidc.GetValue<string>("secret");
                     options.ResponseType = OpenIdConnectResponseType.Code;
                     options.Scope.Add("profile");
+                    options.UsePkce = true;
                     options.GetClaimsFromUserInfoEndpoint = true;
 
                     options.SaveTokens = true;
@@ -88,7 +103,7 @@ namespace TrialsSystem.GatewayService.Api
                 });
 
             builder.Services.AddAuthorization(options => {
-                options.AddPolicy("authenticated", policy =>
+                options.AddPolicy("Authenticated", policy =>
                 {
                     policy.RequireAuthenticatedUser();
                 });

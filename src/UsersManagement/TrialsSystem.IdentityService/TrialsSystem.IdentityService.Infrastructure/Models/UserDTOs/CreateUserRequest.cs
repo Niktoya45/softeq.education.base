@@ -1,5 +1,5 @@
 ﻿
-namespace TrialsSystem.IdentityService.Infrastructure.Models.UserDTO
+namespace TrialsSystem.IdentityService.Infrastructure.Models.UserDTOs
 {
     public class CreateUserRequest
     {
